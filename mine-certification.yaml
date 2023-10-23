@@ -129,6 +129,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MineResource'
+      security:
+        -
+          apiToken: []
   '/api/v1/mines/:mine_id/users':
     post:
       tags:
@@ -149,6 +152,9 @@ paths:
       responses:
         '201':
           description: 'Mine assigned'
+      security:
+        -
+          apiToken: []
   '/api/v1/mines/:mine_id/users/:user_id':
     delete:
       tags:
@@ -169,6 +175,9 @@ paths:
       responses:
         '204':
           description: 'Mine revoked'
+      security:
+        -
+          apiToken: []
   /api/v1/users:
     get:
       tags:
