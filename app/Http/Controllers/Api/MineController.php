@@ -172,6 +172,9 @@ class MineController extends Controller
         path: '/api/v1/mines/:mine_id',
         operationId: 'Validate / Refuse a mine',
         description: 'Validate / Refuse a mine',
+        security: [
+            ['apiToken' => []]
+        ],
         requestBody: new RequestBody(
             content: new JsonContent(
                 ref: '#/components/schemas/ValidateMineRequest'
@@ -190,6 +193,7 @@ class MineController extends Controller
         responses: [
             new OAResponse(
                 response: '200',
+                description: '',
                 content: new JsonContent(
                     ref: '#/components/schemas/MineResource'
                 )
@@ -210,6 +214,9 @@ class MineController extends Controller
         path: '/api/v1/mines/:mine_id/users',
         operationId: 'Assign a mine to a certifier',
         description: 'Assign a mine to a certifier',
+        security: [
+            ['apiToken' => []]
+        ],
         requestBody: new RequestBody(
             content: new JsonContent(
                 ref: '#/components/schemas/AssignMineRequest'
@@ -229,9 +236,6 @@ class MineController extends Controller
             new OAResponse(
                 response: '201',
                 description: 'Mine assigned',
-                content: new JsonContent(
-                    ref: '#/components/schemas/JsonResponse'
-                )
             )
         ]
     )]
@@ -249,11 +253,9 @@ class MineController extends Controller
         path: '/api/v1/mines/:mine_id/users/:user_id',
         operationId: 'Revoke a mine to a certifier',
         description: 'Revoke a mine to a certifier',
-        requestBody: new RequestBody(
-            content: new JsonContent(
-                ref: '#/components/schemas/RevokeMineRequest'
-            )
-        ),
+        security: [
+            ['apiToken' => []]
+        ],
         tags: [
             'Mines'
         ],
@@ -273,9 +275,6 @@ class MineController extends Controller
             new OAResponse(
                 response: '204',
                 description: 'Mine revoked',
-                content: new JsonContent(
-                    ref: '#/components/schemas/JsonResponse'
-                )
             )
         ]
     )]
@@ -285,6 +284,4 @@ class MineController extends Controller
 
         return response()->json([], 204);
     }
-
-
 }

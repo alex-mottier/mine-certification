@@ -145,7 +145,7 @@ class UserController extends Controller
     }
 
     #[Put(
-        path: '/api/v1/users/{userId}',
+        path: '/api/v1/users/:user_id',
         operationId: 'Edit a user',
         description: 'Edit a user',
         security: [
@@ -161,7 +161,7 @@ class UserController extends Controller
         ],
         parameters: [
             new PathParameter(
-                name: 'userId',
+                name: ':user_id',
                 description: "User's ID",
                 required: true,
             )
@@ -186,7 +186,7 @@ class UserController extends Controller
     }
 
     #[Patch(
-        path: '/api/v1/users/{userId}',
+        path: '/api/v1/users/:user_id',
         operationId: 'Validate / Refuse a user',
         description: 'Validate / Refuse a user',
         security: [
@@ -202,7 +202,7 @@ class UserController extends Controller
         ],
         parameters: [
             new PathParameter(
-                name: 'userId',
+                name: ':user_id',
                 description: "User's ID",
                 required: true,
             )
@@ -227,7 +227,7 @@ class UserController extends Controller
     }
 
     #[Delete(
-        path: '/api/v1/users/{userId}',
+        path: '/api/v1/users/:user_id',
         operationId: 'Delete a user',
         description: 'Delete a user',
         security: [
@@ -238,7 +238,7 @@ class UserController extends Controller
         ],
         parameters: [
             new PathParameter(
-                name: 'userId',
+                name: ':user_id',
                 description: "User's ID",
                 required: true,
             )
@@ -257,6 +257,33 @@ class UserController extends Controller
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
+    #[Get(
+        path: '/api/v1/users/:user_id/mines',
+        operationId: "List user's mines",
+        description: "List user's mines",
+        security: [
+            ['apiToken' => []]
+        ],
+        tags: [
+            'Users'
+        ],
+        parameters: [
+            new PathParameter(
+                name: ':user_id',
+                description: "User's ID",
+                required: true,
+            )
+        ],
+        responses: [
+            new OAResponse(
+                response: '200',
+                description: "User's mines",
+                content: new JsonContent(
+                    ref: '#/components/schemas/MineCollection'
+                )
+            )
+        ]
+    )]
     public function userMines(UserMineRequest $request, int $userId): MineCollection
     {
         $mines = $this->service->userMines($userId);

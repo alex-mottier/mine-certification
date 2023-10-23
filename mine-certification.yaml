@@ -21,6 +21,154 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginResource'
+  /api/v1/mines:
+    get:
+      tags:
+        - Mines
+      description: 'List mines with filters available'
+      operationId: 'List mines with filters available'
+      parameters:
+        -
+          name: name
+          in: query
+          description: 'Name of mine'
+          required: false
+        -
+          name: status
+          in: query
+          description: 'Status of mine'
+          required: false
+          example: validated
+        -
+          name: trashed
+          in: query
+          description: 'Retrieve also the deleted mines'
+          required: false
+          example: 'true'
+        -
+          name: lon
+          in: query
+          description: 'Longitude of a position'
+          required: false
+          example: '41.40338'
+        -
+          name: lat
+          in: query
+          description: 'Latitude of a position'
+          required: false
+          example: '2.17403'
+        -
+          name: radius
+          in: query
+          description: 'Radius around the position of the given longitude and latitude (in km)'
+          required: false
+          example: '50'
+      responses:
+        '200':
+          description: 'List of mine'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MineCollection'
+    post:
+      tags:
+        - Mines
+      description: 'Create a new mine'
+      operationId: 'Create a new mine'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreMineRequest'
+      responses:
+        '201':
+          description: 'Mine created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MineResource'
+  '/api/v1/mines/:mine_id':
+    get:
+      tags:
+        - Mines
+      description: 'List mine with details'
+      operationId: 'List mine with details'
+      parameters:
+        -
+          name: ':mine_id'
+          in: path
+          description: 'ID of mine'
+          required: true
+      responses:
+        '200':
+          description: 'List of mine'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MineDetailResource'
+    patch:
+      tags:
+        - Mines
+      description: 'Validate / Refuse a mine'
+      operationId: 'Validate / Refuse a mine'
+      parameters:
+        -
+          name: ':mine_id'
+          in: path
+          description: 'ID of mine'
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateMineRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MineResource'
+  '/api/v1/mines/:mine_id/users':
+    post:
+      tags:
+        - Mines
+      description: 'Assign a mine to a certifier'
+      operationId: 'Assign a mine to a certifier'
+      parameters:
+        -
+          name: ':mine_id'
+          in: path
+          description: 'ID of mine'
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignMineRequest'
+      responses:
+        '201':
+          description: 'Mine assigned'
+  '/api/v1/mines/:mine_id/users/:user_id':
+    delete:
+      tags:
+        - Mines
+      description: 'Revoke a mine to a certifier'
+      operationId: 'Revoke a mine to a certifier'
+      parameters:
+        -
+          name: ':mine_id'
+          in: path
+          description: 'ID of mine'
+          required: true
+        -
+          name: ':user_id'
+          in: path
+          description: 'ID of certifier'
+          required: true
+      responses:
+        '204':
+          description: 'Mine revoked'
   /api/v1/users:
     get:
       tags:
@@ -91,7 +239,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResource'
-  '/api/v1/users/{userId}':
+  '/api/v1/users/:user_id':
     put:
       tags:
         - Users
@@ -99,7 +247,7 @@ paths:
       operationId: 'Edit a user'
       parameters:
         -
-          name: userId
+          name: ':user_id'
           in: path
           description: "User's ID"
           required: true
@@ -125,7 +273,7 @@ paths:
       operationId: 'Delete a user'
       parameters:
         -
-          name: userId
+          name: ':user_id'
           in: path
           description: "User's ID"
           required: true
@@ -142,7 +290,7 @@ paths:
       operationId: 'Validate / Refuse a user'
       parameters:
         -
-          name: userId
+          name: ':user_id'
           in: path
           description: "User's ID"
           required: true
@@ -158,6 +306,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResource'
+      security:
+        -
+          apiToken: []
+  '/api/v1/users/:user_id/mines':
+    get:
+      tags:
+        - Users
+      description: "List user's mines"
+      operationId: "List user's mines"
+      parameters:
+        -
+          name: ':user_id'
+          in: path
+          description: "User's ID"
+          required: true
+      responses:
+        '200':
+          description: "User's mines"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MineCollection'
       security:
         -
           apiToken: []
@@ -179,6 +349,49 @@ components:
           required:
             - 'true'
           type: string
+      type: object
+    AssignMineRequest:
+      title: AssignMineRequest
+      properties:
+        certifiers:
+          description: 'Ids of certifiers to assign'
+          type: array
+          items:
+            type: integer
+      type: object
+    StoreMineRequest:
+      title: StoreMineRequest
+      properties:
+        name:
+          description: "Mine's name"
+          type: string
+        email:
+          description: "Mine's email"
+          type: string
+        phone_number:
+          description: "Mine's phone number"
+          type: string
+        tax_number:
+          description: "Mine's tax number"
+          type: string
+        longitude:
+          description: "Mine's longitude"
+          type: number
+          format: double
+        latitude:
+          description: "Mine's longitude"
+          type: number
+          format: double
+      type: object
+    ValidateMineRequest:
+      title: ValidateMineRequest
+      properties:
+        status:
+          description: "Mine's status"
+          type: string
+          enum:
+            - validated
+            - refused
       type: object
     StoreUserRequest:
       title: StoreUserRequest
@@ -265,6 +478,43 @@ components:
         token:
           type: string
       type: object
+    MineCollection:
+      title: MineCollection
+      type: array
+      items:
+        $ref: '#/components/schemas/MineResource'
+    MineDetailResource:
+      title: MineDetailResource
+      properties:
+        mine:
+          $ref: '#/components/schemas/MineResource'
+        certifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResource'
+      type: object
+    MineResource:
+      title: MineResource
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone_number:
+          type: string
+        longitude:
+          type: string
+        latitude:
+          type: string
+        status:
+          type: string
+          enum:
+            - created
+            - validated
+            - refused
+      type: object
     UserCollection:
       title: UserCollection
       type: array
@@ -302,6 +552,9 @@ tags:
   -
     name: Authentication
     description: 'Endpoint to handle "Authentication" requests'
+  -
+    name: Mines
+    description: 'Endpoint to handle "Mines" request'
   -
     name: Users
     description: 'Endpoint to handle "Users" request'

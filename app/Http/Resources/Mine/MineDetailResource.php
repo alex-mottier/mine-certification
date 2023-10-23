@@ -7,7 +7,27 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Attributes\Items;
+use OpenApi\Attributes\Property;
+use OpenApi\Attributes\Schema;
 
+#[Schema(
+    title: 'MineDetailResource',
+    properties: [
+        new Property(
+            property: 'mine',
+            ref: '#/components/schemas/MineResource'
+        ),
+        new Property(
+            property: 'certifiers',
+            type: 'array',
+            items: new Items(
+                ref: '#/components/schemas/UserResource'
+            )
+        )
+    ],
+    type: 'object'
+)]
 class MineDetailResource extends JsonResource
 {
     public static $wrap = '';
