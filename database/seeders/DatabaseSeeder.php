@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Domain\User\UserType;
 use App\Models\Chapter;
 use App\Models\Criteria;
 use App\Models\CriteriaReport;
+use App\Models\Institution;
 use App\Models\Mine;
 use App\Models\MineUser;
 use App\Models\Reaction;
@@ -13,6 +15,7 @@ use App\Models\User;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
+use Random\Randomizer;
 
 class DatabaseSeeder extends Seeder
 {
@@ -85,6 +88,24 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $certifier->id,
                 'criteria_report_id' => $criteriaReport->id
             ]);
+        }
+
+        Mine::factory(10)->create();
+
+        $institutionUsers = User::query()->where('type', UserType::INSTITUTION->value)->get();
+        $institutions = Institution::factory(5)->create();
+        foreach ($institutions as $institution){
+            $certifiers = $institutionUsers->random((new Randomizer)->getInt(1,$institutionUsers->count()));;
+            $mines = Mine::query()
+                ->validated()
+                ->inRandomOrder()
+                ->take((new Randomizer)->getInt(1,Mine::query()->count()))
+                ->get();
+            /**
+             * @var Institution $institution
+             */
+            $institution->users()->attach($certifiers);
+            $institution->mines()->attach($mines);
         }
     }
 }

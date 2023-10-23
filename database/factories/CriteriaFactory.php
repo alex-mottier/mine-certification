@@ -19,7 +19,7 @@ class CriteriaFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->text(25),
+            'name' => $this->faker->safeColorName(),
             'description' => $this->faker->text,
             'quota' => 1 / ($this->count != 0 ? $this->count : 1),
             'chapter_id' => Chapter::factory()

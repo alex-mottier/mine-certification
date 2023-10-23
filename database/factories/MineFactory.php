@@ -2,9 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Domain\Mine\MineType;
 use App\Domain\Status\Status;
+use App\Domain\User\UserType;
 use App\Models\Mine;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,15 +22,37 @@ class MineFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'name' => $this->faker->company,
+        $status = $this->faker->randomElement([
+            Status::FOR_VALIDATION,
+            Status::VALIDATED,
+            Status::REFUSED,
+            Status::CREATED
+        ]);
+        $validatedBy = null;
+        $validatedAt = null;
+        if($status === Status::VALIDATED){
+            $now = Carbon::now();
+            $validatedBy = User::factory()->create([
+                'status' => Status::VALIDATED,
+                'type' => UserType::ADMINISTRATOR,
+                'validated_at' => $now
+            ]);
+            $validatedAt = $now;
+        }
+
+        return array_filter([
+            'name' => $this->faker->country ."'s mine ".$this->faker->randomDigit(),
             'email' => $this->faker->email,
             'phone_number' => $this->faker->phoneNumber,
             'tax_number' => $this->faker->swiftBicNumber,
-            'status' => $this->faker->randomElement([Status::CREATED, Status::REFUSED, Status::FOR_VALIDATION]),
+            'status' => $status,
+            'type' => $this->faker->randomElement(MineType::cases()),
             'longitude' => $this->faker->longitude,
             'latitude' => $this->faker->latitude,
+            'image_path' => $this->faker->imageUrl(250,250, 'mine'),
             'created_by' => User::factory()->create(),
-        ];
+            'validated_by' => $validatedBy,
+            'validated_at' => $validatedAt
+        ]);
     }
 }

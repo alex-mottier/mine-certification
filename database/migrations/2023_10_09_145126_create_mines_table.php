@@ -18,7 +18,10 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone_number');
             $table->string('tax_number');
+            $table->string('score')->nullable();
+            $table->string('image_path')->nullable();
 
+            $table->string('type');
             $table->string('status')->default('created');
 
             $table->double('longitude');

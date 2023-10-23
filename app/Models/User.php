@@ -88,12 +88,12 @@ class User extends Authenticatable
 
     public function mines(): BelongsToMany
     {
-        return $this->belongsToMany(Mine::class, null, 'certifier_id');
+        return $this->belongsToMany(Mine::class, null, 'certifier_id')->withTimestamps();
     }
 
     public function institutions(): BelongsToMany
     {
-        return $this->belongsToMany(Institution::class);
+        return $this->belongsToMany(Institution::class)->withTimestamps();
     }
 
     public function scopeInArea(Builder $query, float $longitude, float $latitude, float $radius): void
@@ -113,6 +113,11 @@ class User extends Authenticatable
     public function scopeIsAdmin(Builder $query): void
     {
         $query->where('type', UserType::ADMINISTRATOR->value);
+    }
+
+    public function scopeIsCertifier(Builder $query): void
+    {
+        $query->where('type', UserType::CERTIFIER->value);
     }
 
     public function isCertifier(): bool
