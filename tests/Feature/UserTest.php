@@ -5,37 +5,13 @@ namespace Tests\Feature;
 use App\Domain\Status\Status;
 use App\Domain\Type\UserType;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
-    private User $certifier;
-    private User $administrator;
-    private User $crashUser;
-
-    private string $uri;
-    private string $uriWithId;
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->certifier = User::factory()->create([
-            'status' => Status::VALIDATED->value,
-            'type' => UserType::CERTIFIER->value
-        ]);
-
-        $this->administrator = User::factory()->create([
-            'status' => Status::VALIDATED->value,
-            'type' => UserType::ADMINISTRATOR->value
-        ]);
-
-        $this->crashUser = User::factory()->create([
-            'status' => Status::CREATED->value,
-            'type' => UserType::CERTIFIER->value
-        ]);
 
         $this->uri = '/api/v1/users';
         $this->uriWithId = $this->uri . "/{$this->crashUser->id}";
