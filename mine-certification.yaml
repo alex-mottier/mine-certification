@@ -1,0 +1,307 @@
+openapi: 3.0.0
+info:
+  title: mine-certification
+  version: 1.0.0
+paths:
+  /api/v1/login:
+    post:
+      tags:
+        - Authentication
+      description: Login
+      operationId: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileLoginRequest'
+      responses:
+        '201':
+          description: 'User created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResource'
+  /api/v1/users:
+    get:
+      tags:
+        - Users
+      description: 'List users with filters available'
+      operationId: 'List users with filters available'
+      parameters:
+        -
+          name: type
+          in: query
+          description: 'Type of user'
+          required: false
+          example: certifier
+        -
+          name: status
+          in: query
+          description: 'Status of user'
+          required: false
+          example: validated
+        -
+          name: trashed
+          in: query
+          description: 'Retrieve also the deleted users'
+          required: false
+          example: 'true'
+        -
+          name: lon
+          in: query
+          description: 'Longitude of a position'
+          required: false
+          example: '41.40338'
+        -
+          name: lat
+          in: query
+          description: 'Latitude of a position'
+          required: false
+          example: '2.17403'
+        -
+          name: radius
+          in: query
+          description: 'Radius around the position of the given longitude and latitude (in km)'
+          required: false
+          example: '50'
+      responses:
+        '200':
+          description: 'List of users'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCollection'
+      security:
+        -
+          apiToken: []
+    post:
+      tags:
+        - Users
+      description: 'Create a new user'
+      operationId: 'Create a new user'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreUserRequest'
+      responses:
+        '201':
+          description: 'User created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+  '/api/v1/users/{userId}':
+    put:
+      tags:
+        - Users
+      description: 'Edit a user'
+      operationId: 'Edit a user'
+      parameters:
+        -
+          name: userId
+          in: path
+          description: "User's ID"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: 'User edited'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+      security:
+        -
+          apiToken: []
+    delete:
+      tags:
+        - Users
+      description: 'Delete a user'
+      operationId: 'Delete a user'
+      parameters:
+        -
+          name: userId
+          in: path
+          description: "User's ID"
+          required: true
+      responses:
+        '204':
+          description: 'User deleted'
+      security:
+        -
+          apiToken: []
+    patch:
+      tags:
+        - Users
+      description: 'Validate / Refuse a user'
+      operationId: 'Validate / Refuse a user'
+      parameters:
+        -
+          name: userId
+          in: path
+          description: "User's ID"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateUserRequest'
+      responses:
+        '200':
+          description: 'User validated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+      security:
+        -
+          apiToken: []
+components:
+  schemas:
+    MobileLoginRequest:
+      title: StoreUserRequest
+      properties:
+        username:
+          description: "User's username"
+          required:
+            - 'true'
+          type: string
+        password:
+          description: "User's password"
+          type: string
+        device_name:
+          description: "User's device name"
+          required:
+            - 'true'
+          type: string
+      type: object
+    StoreUserRequest:
+      title: StoreUserRequest
+      properties:
+        username:
+          description: "User's username"
+          required:
+            - 'true'
+          type: string
+        fullname:
+          description: "User's full name"
+          type: string
+        email:
+          description: "User's email"
+          required:
+            - 'true'
+          type: string
+        password:
+          description: "User's password"
+          required:
+            - 'true'
+          type: string
+        type:
+          description: "User's type"
+          required:
+            - 'true'
+          type: string
+          enum:
+            - administrator
+            - certifier
+            - institution
+        institutions:
+          description: "User's institutions"
+          type: array
+          items:
+            description: "Insitutions's ID"
+            type: integer
+      type: object
+    UpdateUserRequest:
+      title: UpdateUserRequest
+      properties:
+        username:
+          description: "User's username"
+          type: string
+        fullname:
+          description: "User's full name"
+          type: string
+        email:
+          description: "User's email"
+          type: string
+        password:
+          description: "User's password"
+          type: string
+        type:
+          description: "User's type"
+          type: string
+          enum:
+            - administrator
+            - certifier
+            - institution
+        institutions:
+          description: "User's institutions"
+          type: array
+          items:
+            description: "Insitutions's ID"
+            type: integer
+      type: object
+    ValidateUserRequest:
+      title: ValidateUserRequest
+      properties:
+        status:
+          description: 'In wich status will be the user after the operation'
+          type: string
+          enum:
+            - validated
+            - refused
+      type: object
+    LoginResource:
+      title: LoginResource
+      properties:
+        type:
+          type: string
+          example: Bearer
+        token:
+          type: string
+      type: object
+    UserCollection:
+      title: UserCollection
+      type: array
+      items:
+        $ref: '#/components/schemas/UserResource'
+    UserResource:
+      title: UserResource
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        type:
+          type: string
+          enum:
+            - administrator
+            - certifier
+            - institution
+        status:
+          type: string
+          enum:
+            - created
+            - validated
+            - refused
+      type: object
+  securitySchemes:
+    apiToken:
+      type: apiKey
+      name: Authentication
+      in: header
+      bearerFormat: Bearer
+tags:
+  -
+    name: Authentication
+    description: 'Endpoint to handle "Authentication" requests'
+  -
+    name: Users
+    description: 'Endpoint to handle "Users" request'
