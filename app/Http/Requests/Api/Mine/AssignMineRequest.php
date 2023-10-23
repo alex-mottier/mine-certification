@@ -5,7 +5,22 @@ namespace App\Http\Requests\Api\Mine;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Attributes\Items;
+use OpenApi\Attributes\Property;
+use OpenApi\Attributes\Schema;
 
+#[Schema(
+    title: 'AssignMineRequest',
+    properties: [
+        new Property(
+            property: 'certifiers',
+            description: "Ids of certifiers to assign",
+            type: 'array',
+            items: new Items(type: 'integer')
+        ),
+    ],
+    type: 'object'
+)]
 class AssignMineRequest extends FormRequest
 {
     /**
