@@ -12,6 +12,7 @@ use App\Domain\Factory\Mine\MineDetailDTOFactory;
 use App\Domain\Factory\Mine\MineDTOFactory;
 use App\Domain\Status\Status;
 use App\Exceptions\Auth\UnauthorizedException;
+use App\Exceptions\Auth\UserNotValidatedException;
 use App\Exceptions\Mine\MineNotFoundException;
 use App\Exceptions\Status\BadStatusException;
 use App\Exceptions\User\UserNotFoundException;
@@ -150,7 +151,7 @@ class MineService
         return $this->mineFactory->fromModel($mine);
     }
 
-    public function assign(AssignMineDTO $request, int $mineId): MineDTO
+    public function assign(AssignMineDTO $request, int $mineId): MineDetailDTO
     {
         /**
          * @var Mine|null $mine
@@ -165,12 +166,17 @@ class MineService
              * @var User $certifier
              */
             $certifier = User::query()->find($certifierId);
-            if($certifier->isValidated() && $certifier->isCertifier() && !$certifier->hasMine($mineId)){
-                $mine->certifiers()->attach($certifier->id);
+            if(!$certifier->isValidated() || !$certifier->isCertifier() || $certifier->hasMine($mineId)){
+                throw new UserNotValidatedException(
+                    'The cause can also come from the fact that the user is not a certifier'.
+                    ' or the certifier is already assigned to the mine.'
+                );
             }
+
+            $mine->certifiers()->attach($certifier->id);
         }
 
-        return $this->mineFactory->fromModel($mine);
+        return $this->mineDetailFactory->fromModel($mine);
     }
 
     public function revoke(int $mineId, int $userId): void

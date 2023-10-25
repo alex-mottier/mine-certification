@@ -125,6 +125,121 @@ class MineTest extends TestCase
             'mine' => []
         ]);
 
+        $mine = Mine::factory()->create();
+        $response = $this->get($this->uri . '/' . $mine->id);
+        $response->assertUnauthorized();
+    }
 
+    public function test_admin_can_assign_mine(): void
+    {
+        $mine = Mine::factory()->create();
+        $response = $this->actingAs($this->administrator)->post("$this->uri/$mine->id/users");
+        $response->assertStatus(422);
+
+        $response = $this->actingAs($this->administrator)->post("$this->uri/$mine->id/users", [
+            'certifiers' => [$this->certifier->id]
+        ]);
+        $response->assertSuccessful();
+        $response->assertJson([
+            'mine' => [],
+            'certifiers' => []
+        ]);
+    }
+
+    public function test_admin_can_revoke_mine(): void
+    {
+        $mine = Mine::factory()->create();
+        $mine->certifiers()->attach($this->certifier);
+
+        $response = $this->actingAs($this->administrator)->get("$this->uri/$mine->id");
+        $response->assertJson([
+            'mine' => [],
+            'certifiers' => []
+        ]);
+
+        $response = $this->actingAs($this->administrator)
+            ->delete("$this->uri/$mine->id/users/{$this->certifier->id}");
+
+        $response->assertNoContent();
+
+        $response = $this->actingAs($this->administrator)->get("$this->uri/$mine->id");
+        $response->assertJsonMissing([
+            'certifiers' => [],
+        ]);
+    }
+
+    public function test_admin_can_validate_mine_in_status_for_validation(): void
+    {
+        $mine = Mine::factory()->create([
+            'status' => Status::FOR_VALIDATION
+        ]);
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id");
+        $response->assertStatus(422);
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id", [
+            'status' => 'created'
+        ]);
+        $response->assertForbidden();
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id", [
+            'status' => 'validated'
+        ]);
+        $response->assertSuccessful();
+
+        $this->assertDatabaseHas(Mine::class, [
+            'id' => $mine->id,
+            'status' => Status::VALIDATED
+        ]);
+    }
+
+    public function test_admin_can_refuse_mine_in_status_for_validation(): void
+    {
+        $mine = Mine::factory()->create([
+            'status' => Status::FOR_VALIDATION
+        ]);
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id");
+        $response->assertStatus(422);
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id", [
+            'status' => 'created'
+        ]);
+        $response->assertForbidden();
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id", [
+            'status' => 'refused'
+        ]);
+        $response->assertSuccessful();
+
+        $this->assertDatabaseHas(Mine::class, [
+            'id' => $mine->id,
+            'status' => Status::REFUSED
+        ]);
+    }
+
+    public function test_admin_cannot_validate_or_refuse_mine_in_status_different_than_for_validation(): void
+    {
+        $mine = Mine::factory()->create([
+            'status' => Status::CREATED
+        ]);
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id");
+        $response->assertStatus(422);
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id", [
+            'status' => 'created'
+        ]);
+        $response->assertForbidden();
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id", [
+            'status' => 'validated'
+        ]);
+        $response->assertForbidden();
+
+        $response = $this->actingAs($this->administrator)->patch("$this->uri/$mine->id", [
+            'status' => 'refused'
+        ]);
+        $response->assertForbidden();
     }
 }

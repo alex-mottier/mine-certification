@@ -239,14 +239,14 @@ class MineController extends Controller
             )
         ]
     )]
-    public function assign(AssignMineRequest $request, int $mineId): JsonResponse
+    public function assign(AssignMineRequest $request, int $mineId): MineDetailResource
     {
-        $this->service->assign(
+        $mine = $this->service->assign(
             $this->assignFactory->fromRequest($request),
             $mineId
         );
 
-        return response()->json([], 201);
+        return new MineDetailResource($mine);
     }
 
     #[Delete(
