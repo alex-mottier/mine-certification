@@ -11,6 +11,7 @@ use App\Domain\DTO\Mine\ValidateMineDTO;
 use App\Domain\Factory\Mine\MineDetailDTOFactory;
 use App\Domain\Factory\Mine\MineDTOFactory;
 use App\Domain\Status\Status;
+use App\Exceptions\Auth\UnauthorizedException;
 use App\Exceptions\Mine\MineNotFoundException;
 use App\Exceptions\Status\BadStatusException;
 use App\Exceptions\User\UserNotFoundException;
@@ -61,6 +62,23 @@ class MineService
             if($search->getStatus()){
                 $query->where('status', $search->getStatus()->value);
             }
+
+            if($search->getUsers()){
+                foreach ($search->getUsers() as $userId){
+                    $query->orWhere('created_by', $userId);
+                }
+            }
+
+            return $this->getMines($query);
+        }
+
+        if($search->getUsers()){
+            foreach ($search->getUsers() as $userId){
+                if($userId === $this->authUser->id){
+                    $query->where('created_by',$this->authUser->id);
+                    return $this->getMines($query);
+                }
+            }
             return $this->getMines($query);
         }
 
@@ -79,6 +97,10 @@ class MineService
         if(!$mine){
             throw new MineNotFoundException();
         }
+        if((!$this->authUser && $mine->status !== Status::VALIDATED) ||
+            ($this->authUser?->isCertifier() && $this->authUser?->id !== $mine->created_by)){
+            throw new UnauthorizedException();
+        }
 
         return $this->mineDetailFactory->fromModel($mine);
     }
@@ -94,7 +116,6 @@ class MineService
             $mine->created_by = $this->authUser->id;
             $mine->save();
         }
-
         return $this->mineFactory->fromModel($mine);
     }
 

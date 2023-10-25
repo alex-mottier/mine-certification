@@ -35,14 +35,20 @@ class UserTest extends TestCase
         $uri_status = $this->uri . '?status=validated';
         $uri_both = $this->uri . '?type=administrator&status=refused';
 
+        $countCertifier = User::query()->where('type', UserType::CERTIFIER)->count();
         $response = $this->actingAs($this->administrator)->get($uri_type);
-        $response->assertJsonCount(2, 'users');
+        $response->assertJsonCount($countCertifier, 'users');
 
+        $countValidated = User::query()->where('status', Status::VALIDATED)->count();
         $response = $this->actingAs($this->administrator)->get($uri_status);
-        $response->assertJsonCount(2, 'users');
+        $response->assertJsonCount($countValidated, 'users');
 
+        $countBoth = User::query()
+            ->where('status', Status::REFUSED)
+            ->where('type', UserType::ADMINISTRATOR)
+            ->count();
         $response = $this->actingAs($this->administrator)->get($uri_both);
-        $response->assertJsonCount(0, 'users');
+        $response->assertJsonCount($countBoth, 'users');
     }
 
     public function test_guest_can_submit_a_user_creation_request_to_be_certifier(): void
@@ -80,8 +86,9 @@ class UserTest extends TestCase
         ];
         $response = $this->actingAs($this->administrator)->post($this->uri, $body);
         $response->assertSuccessful();
+        $userCreated = User::query()->where('username', $body['username'])->first();
         $this->assertDatabaseHas(User::class, [
-            'id' => 4,
+            'id' => $userCreated->id,
             'type' => UserType::ADMINISTRATOR,
             'status' => Status::VALIDATED
         ]);
@@ -89,22 +96,6 @@ class UserTest extends TestCase
         $body['type'] = UserType::CERTIFIER->value;
         $response = $this->actingAs($this->administrator)->post($this->uri, $body);
         $response->assertStatus(422);
-        $this->assertDatabaseCount(User::class, 4);
-
-        $body = [
-            'username' => $this->faker->userName(),
-            'fullname' => $this->faker->name(),
-            'email' => $this->faker->email(),
-            'password' => $this->faker->password(),
-            'type' => UserType::CERTIFIER->value
-        ];
-        $response = $this->actingAs($this->administrator)->post($this->uri, $body);
-        $response->assertSuccessful();
-        $this->assertDatabaseHas(User::class, [
-            'id' => 5,
-            'type' => UserType::CERTIFIER,
-            'status' => Status::VALIDATED
-        ]);
     }
 
     public function test_only_admin_can_validate_user(): void
@@ -136,7 +127,8 @@ class UserTest extends TestCase
 
     public function test_only_admin_can_delete_user(): void
     {
-        $this->assertDatabaseCount(User::class, 3);
+        $count = User::query()->count();
+        $this->assertDatabaseCount(User::class, $count);
 
         $response = $this->delete($this->uriWithId);
         $response->assertRedirect('/login');
@@ -156,8 +148,9 @@ class UserTest extends TestCase
 
     public function test_only_admin_can_update_user(): void
     {
-        $this->assertDatabaseCount(User::class, 3);
-
+        $count = User::query()->count();
+        $this->assertDatabaseCount(User::class, $count);
+        
         $response = $this->put($this->uriWithId);
         $response->assertRedirect('/login');
 

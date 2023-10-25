@@ -3,6 +3,7 @@
 namespace App\Domain\Factory\Mine;
 
 use App\Domain\DTO\Mine\StoreMineDTO;
+use App\Domain\Status\Status;
 use App\Http\Requests\Api\Mine\StoreMineRequest;
 
 class StoreMineDTOFactory
@@ -17,6 +18,7 @@ class StoreMineDTOFactory
             taxNumber: $request->validated('tax_number'),
             longitude: $request->validated('longitude'),
             latitude: $request->validated('latitude'),
+            status: Status::CREATED,
         );
     }
 }

@@ -16,6 +16,7 @@ use OpenApi\Attributes\Schema;
 )]
 class MineCollection extends ResourceCollection
 {
+    public static $wrap = 'mines';
     /**
      * Transform the resource collection into an array.
      *

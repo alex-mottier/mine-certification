@@ -29,6 +29,7 @@ class MineDetailDTOFactory
 
         return new MineDetailDTO(
             new MineDTO(
+                id: $mine->id,
                 name: $mine->name,
                 email: $mine->email,
                 phoneNumber: $mine->phone_number,

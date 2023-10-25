@@ -11,9 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\SearchUserRequest;
 use App\Http\Requests\Api\User\StoreUserRequest;
 use App\Http\Requests\Api\User\UpdateUserRequest;
-use App\Http\Requests\Api\User\UserMineRequest;
 use App\Http\Requests\Api\User\ValidateUserRequest;
-use App\Http\Resources\Mine\MineCollection;
 use App\Http\Resources\User\UserCollection;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\JsonResponse;
@@ -255,39 +253,5 @@ class UserController extends Controller
         $this->service->destroy($userId);
 
         return response()->json([], Response::HTTP_NO_CONTENT);
-    }
-
-    #[Get(
-        path: '/api/v1/users/:user_id/mines',
-        operationId: "List user's mines",
-        description: "List user's mines",
-        security: [
-            ['apiToken' => []]
-        ],
-        tags: [
-            'Users'
-        ],
-        parameters: [
-            new PathParameter(
-                name: ':user_id',
-                description: "User's ID",
-                required: true,
-            )
-        ],
-        responses: [
-            new OAResponse(
-                response: '200',
-                description: "User's mines",
-                content: new JsonContent(
-                    ref: '#/components/schemas/MineCollection'
-                )
-            )
-        ]
-    )]
-    public function userMines(UserMineRequest $request, int $userId): MineCollection
-    {
-        $mines = $this->service->userMines($userId);
-
-        return new MineCollection($mines);
     }
 }

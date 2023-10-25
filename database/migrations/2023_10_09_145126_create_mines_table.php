@@ -14,15 +14,15 @@ return new class extends Migration
     {
         Schema::create('mines', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('email');
             $table->string('phone_number');
             $table->string('tax_number');
 
             $table->string('status')->default('created');
 
-            $table->double('longitude')->nullable();
-            $table->double('latitude')->nullable();
+            $table->double('longitude');
+            $table->double('latitude');
 
             $table->foreignIdFor(User::class,'created_by')->nullable();
             $table->foreignIdFor(User::class,'validated_by')->nullable();

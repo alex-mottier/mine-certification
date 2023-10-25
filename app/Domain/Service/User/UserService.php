@@ -3,7 +3,6 @@
 namespace App\Domain\Service\User;
 
 use App\Domain\Contract\Service\User\UserServiceContract;
-use App\Domain\DTO\Mine\MineDTO;
 use App\Domain\DTO\User\SearchUserDTO;
 use App\Domain\DTO\User\StoreUserDTO;
 use App\Domain\DTO\User\UpdateUserDTO;
@@ -145,25 +144,5 @@ readonly class UserService implements UserServiceContract
         $user = User::query()->find($updateUserDTO->getUserId());
 
         return $this->userFactory->fromModel($user);
-    }
-
-
-    /**
-     * @param int $userId
-     * @return MineDTO[]
-     */
-    public function userMines(int $userId): array
-    {
-
-        $mines = [];
-        $query = User::query()
-        ->find($userId)
-        ->mines();
-
-        foreach ($query->get() as $mine){
-            $mines[] = $this->mineFactory->fromModel($mine);
-        }
-
-        return $mines;
     }
 }

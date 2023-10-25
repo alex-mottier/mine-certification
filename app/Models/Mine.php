@@ -15,6 +15,16 @@ class Mine extends Model
     use HasCoordinates;
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'email',
+        'phone_number',
+        'tax_number',
+        'longitude',
+        'latitude',
+        'status',
+    ];
+
     protected $casts = [
         'status' => Status::class
     ];

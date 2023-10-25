@@ -18,6 +18,7 @@ class SearchMineDTOFactory
             longitude: $request->validated('longitude'),
             latitude: $request->validated('latitude'),
             radius: $request->validated('radius'),
+            users: $request->validated('users'),
         );
     }
 }

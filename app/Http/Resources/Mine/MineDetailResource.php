@@ -48,7 +48,7 @@ class MineDetailResource extends JsonResource
         $user = Auth::guard('sanctum')->user();
         $certifiers = [];
 
-        if($user->isAdmin()){
+        if($user?->isAdmin()){
             $certifiers = $this->resource->getCertifiers();
         }
 

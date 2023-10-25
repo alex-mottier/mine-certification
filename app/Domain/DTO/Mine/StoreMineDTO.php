@@ -2,6 +2,7 @@
 
 namespace App\Domain\DTO\Mine;
 
+use App\Domain\Status\Status;
 use JsonSerializable;
 
 readonly class StoreMineDTO implements JsonSerializable
@@ -12,7 +13,8 @@ readonly class StoreMineDTO implements JsonSerializable
         protected string $phoneNumber,
         protected string $taxNumber,
         protected float $longitude,
-        protected float $latitude
+        protected float $latitude,
+        protected Status $status
     ){
     }
 
@@ -24,7 +26,8 @@ readonly class StoreMineDTO implements JsonSerializable
             'phone_number' => $this->phoneNumber,
             'tax_number' => $this->taxNumber,
             'longitude' => $this->longitude,
-            'latitude' => $this->latitude
+            'latitude' => $this->latitude,
+            'status' => $this->status
         ];
     }
 }

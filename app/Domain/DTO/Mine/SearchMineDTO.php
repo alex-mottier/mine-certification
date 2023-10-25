@@ -6,13 +6,23 @@ use App\Domain\Status\Status;
 
 readonly class SearchMineDTO
 {
+    /**
+     * @param string|null $name
+     * @param Status|null $status
+     * @param bool|null $trashed
+     * @param float|null $longitude
+     * @param float|null $latitude
+     * @param float|null $radius
+     * @param int[]|null $users
+     */
     public function __construct(
         protected ?string $name,
         protected ?Status $status,
         protected ?bool $trashed,
         protected ?float $longitude,
         protected ?float $latitude,
-        protected ?float $radius
+        protected ?float $radius,
+        protected ?array $users
     )
     {
     }
@@ -41,7 +51,12 @@ readonly class SearchMineDTO
     {
         return $this->radius;
     }
-    
+
+    public function getUsers(): ?array
+    {
+        return $this->users;
+    }
+
 
     public function withTrashed(): bool
     {

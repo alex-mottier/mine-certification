@@ -57,10 +57,16 @@ class StoreMineRequest extends FormRequest
         return [
             'name' => 'required|string',
             'email' => 'required|email',
-            'phone_number' => 'required|regex:/^\+?[1-9][0-9]{7,14}$/',
+            'phone_number' => 'required|string',
             'tax_number' => 'required|string',
-            'longitude' => 'required|regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/',
-            'latitude' => 'required|regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/',
+            'longitude' => [
+                'required',
+                'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'
+            ],
+            'latitude' => [
+                'required',
+                'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'
+            ],
         ];
     }
 

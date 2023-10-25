@@ -32,6 +32,8 @@ class SearchMineRequest extends FormRequest
                 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'
             ],
             'radius' => 'nullable|required_with:latitude,longitude|decimal:0,2',
+            'users' => 'nullable|array',
+            'users.*' => 'nullable|integer|exists:users,id'
         ];
     }
 }
