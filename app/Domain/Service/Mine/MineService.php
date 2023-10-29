@@ -66,7 +66,7 @@ class MineService
 
             if($search->getUsers()){
                 foreach ($search->getUsers() as $userId){
-                    $query->orWhere('created_by', $userId);
+                    $query->where('created_by', $userId);
                 }
             }
 

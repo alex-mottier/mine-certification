@@ -7,6 +7,7 @@ use App\Domain\Trait\HasCoordinates;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Mine extends Model
@@ -36,5 +37,10 @@ class Mine extends Model
     public function certifiers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, null,null,'certifier_id');
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 }
