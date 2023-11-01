@@ -20,13 +20,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         User::factory()->create([
+         $admin = User::factory()->create([
              'username' => 'amottier',
              'email' => 'alex_mottier@hotmail.com',
              'type' => 'administrator',
              'status' => 'validated',
              'validated_at' => now()
          ]);
+
+        User::factory()->create([
+            'username' => 'test_certifier',
+            'email' => 'test_certifier@hotmail.com',
+            'type' => 'certifier',
+            'status' => 'validated',
+            'validated_at' => now(),
+            'validated_by' => $admin->id
+        ]);
+
+        User::factory()->create([
+            'username' => 'test_institution',
+            'email' => 'test_institution@hotmail.com',
+            'type' => 'institution',
+            'status' => 'validated',
+            'validated_at' => now(),
+            'validated_by' => $admin->id
+        ]);
 
          $chapters = Chapter::factory(5)->create();
          foreach ($chapters as $chapter){

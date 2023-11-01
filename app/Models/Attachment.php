@@ -10,6 +10,12 @@ class Attachment extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'criteria_report_id',
+        'filename',
+        'path'
+    ];
+
     public function criteriaReport(): BelongsTo
     {
         return $this->belongsTo(CriteriaReport::class);

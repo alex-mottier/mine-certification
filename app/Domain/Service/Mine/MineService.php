@@ -49,7 +49,6 @@ class MineService
         if($search->getName()){
             $query->where('name', 'like', '%'.$search->getName().'%');
         }
-
         if(!$this->authUser){
             $query->where('status', Status::VALIDATED->value);
             return $this->getMines($query);

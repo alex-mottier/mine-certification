@@ -13,6 +13,13 @@ class CriteriaReport extends Model
 
     protected $table = 'criteria_report';
 
+    protected $fillable = [
+      'criteria_id',
+      'report_id',
+      'comment',
+      'score',
+    ];
+
     public function attachments(): HasMany
     {
         return $this->hasMany(Attachment::class);

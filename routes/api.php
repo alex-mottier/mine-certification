@@ -76,7 +76,8 @@ Route::prefix('v1')->middleware('api')->group(function () {
         Route::prefix('reports')->group(function(){
             Route::controller(ReportController::class)->group(function() {
                 Route::get('', 'index');
-                Route::put('{reportId}', 'update');
+                Route::post('{reportId}', 'update');
+                Route::patch('{reportId}', 'upgrade');
             });
         });
     });
