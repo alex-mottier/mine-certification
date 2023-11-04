@@ -19,6 +19,7 @@ use App\Models\Mine;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Support\Collection;
 
 readonly class ReportService
 {
@@ -50,6 +51,19 @@ readonly class ReportService
 
     public function store(StoreReportDTO $store): ReportDTO
     {
+        /**
+         * @var Mine $mine
+         */
+        $mine = Mine::query()->find($store->getMineId());
+        
+        $certifiers = $mine->certifiers()->get();
+        if(
+            !$this->isCertifier($certifiers, $this->authUser) &&
+            $store->getType() === ReportType::EVALUATION
+        ){
+            throw new UnauthorizedException();
+        }
+
         if($store->getType() === ReportType::REPORT){
             $store->setStatus(Status::FOR_VALIDATION);
         }
@@ -159,10 +173,8 @@ readonly class ReportService
 
     private function isCertifierOrOwner(array $certifiers, User $user, Report $report): bool
     {
-        foreach ($certifiers as $certifier){
-            if($certifier->id === $user->id){
-                return true;
-            }
+        if($this->isCertifier($certifiers, $user)){
+            return true;
         }
 
         /**
@@ -206,5 +218,24 @@ readonly class ReportService
     private function calculateScore(): void
     {
         //TODO Calculate score
+    }
+
+    /**
+     * @param Collection<User> $certifiers
+     * @param User|null $user
+     * @return bool
+     */
+    private function isCertifier(Collection $certifiers, ?User $user): bool
+    {
+        if(!$user){
+            return false;
+        }
+
+        foreach ($certifiers as $certifier){
+            if($certifier->id === $user->id){
+                return true;
+            }
+        }
+        return false;
     }
 }

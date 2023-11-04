@@ -24,6 +24,24 @@ readonly class CriteriaService
         $criterias = [];
 
         $query = Criteria::query();
+
+        if($search->getName() || $search->getDescription()){
+            $query->where('name', 'like', '%'.$search->getName()??$search->getDescription().'%');
+            $query->orWhere('name', 'like', '%'.$search->getDescription()??$search->getName().'%');
+            $query->where('description', 'like', '%'.$search->getName()??$search->getDescription().'%');
+            $query->orWhere('description', 'like', '%'.$search->getDescription()??$search->getName().'%');
+        }
+
+        if($search->getQuota()){
+            $query->where('quota', $search->getQuota());
+        }
+
+        if($search->getChapters()){
+            foreach ($search->getChapters() as $chapter){
+                $query->where('chapter_id', $chapter);
+            }
+        }
+
         foreach ($query->get() as $criteria){
             $criterias[] = $this->factory->fromModel($criteria);
         }

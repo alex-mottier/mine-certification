@@ -12,6 +12,7 @@ class ReportResource extends JsonResource
      * @var ReportDTO $resource
      */
     public $resource;
+    public static $wrap = 'report';
     /**
      * Transform the resource into an array.
      *

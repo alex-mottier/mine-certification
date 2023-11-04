@@ -9,8 +9,6 @@ class SearchReportDTOFactory
 {
     public function fromRequest(SearchReportRequest $request): SearchReportDTO
     {
-        return new SearchReportDTO(
-            
-        );
+        return new SearchReportDTO();
     }
 }

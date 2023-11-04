@@ -4,10 +4,14 @@ namespace Tests\Feature;
 
 use App\Domain\Status\Status;
 use App\Models\Mine;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class MineTest extends TestCase
 {
+    use RefreshDatabase;
+    use WithFaker;
     protected function setUp(): void
     {
         parent::setUp();
