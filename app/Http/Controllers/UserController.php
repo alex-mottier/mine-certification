@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Domain\Factory\User\SearchUserDTOFactory;
 use App\Domain\Factory\User\StoreUserDTOFactory;
 use App\Domain\Factory\User\UpdateUserDTOFactory;
 use App\Domain\Factory\User\ValidateUserDTOFactory;
 use App\Domain\Service\User\UserService;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\SearchUserRequest;
 use App\Http\Requests\Api\User\StoreUserRequest;
 use App\Http\Requests\Api\User\UpdateUserRequest;

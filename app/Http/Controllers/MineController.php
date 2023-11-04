@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Domain\Factory\Mine\AssignMineDTOFactory;
 use App\Domain\Factory\Mine\SearchMineDTOFactory;
 use App\Domain\Factory\Mine\StoreMineDTOFactory;
 use App\Domain\Factory\Mine\ValidateMineDTOFactory;
 use App\Domain\Service\Mine\MineService;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Mine\AssignMineRequest;
 use App\Http\Requests\Api\Mine\RevokeMineRequest;
 use App\Http\Requests\Api\Mine\SearchMineRequest;

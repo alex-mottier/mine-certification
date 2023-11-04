@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Domain\Factory\Chapter\SearchChapterDTOFactory;
 use App\Domain\Service\Chapter\ChapterService;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Chapter\SearchChapterRequest;
 use App\Http\Resources\Chapter\ChapterCollection;
 

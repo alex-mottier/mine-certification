@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Domain\Factory\Criteria\SearchCriteriaDTOFactory;
 use App\Domain\Service\Criteria\CriteriaService;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Criteria\SearchCriteriaRequest;
 use App\Http\Resources\Criteria\CriteriaCollection;
 

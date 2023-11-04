@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Domain\Factory\Report\SearchReportDTOFactory;
 use App\Domain\Factory\Report\StoreReportDTOFactory;
 use App\Domain\Factory\Report\UpdateReportDTOFactory;
 use App\Domain\Factory\Report\UpgradeReportDTOFactory;
 use App\Domain\Service\Report\ReportService;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Report\SearchReportRequest;
 use App\Http\Requests\Api\Report\StoreReportRequest;
 use App\Http\Requests\Api\Report\UpdateReportRequest;

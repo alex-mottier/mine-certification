@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ChapterController;
-use App\Http\Controllers\Api\CriteriaController;
-use App\Http\Controllers\Api\MineController;
-use App\Http\Controllers\Api\ReportController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChapterController;
+use App\Http\Controllers\CriteriaController;
+use App\Http\Controllers\MineController;
+use App\Http\Controllers\ReactionController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -70,6 +71,13 @@ Route::prefix('v1')->middleware('api')->group(function () {
                     Route::post('', 'assign');
                     Route::delete('{userId}', 'revoke');
                 });
+            });
+        });
+
+        Route::prefix('reactions')->group(function(){
+            Route::controller(ReactionController::class)->group(function() {
+                Route::get('', 'index');
+                Route::post('', 'store');
             });
         });
 
