@@ -21,6 +21,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginResource'
+  /api/v1/chapters:
+    get:
+      tags:
+        - Chapter
+      description: 'List chapters'
+      operationId: 'List chapters'
+      responses:
+        '200':
+          description: 'List chapters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChapterCollection'
+  /api/v1/criterias:
+    get:
+      tags:
+        - Criteria
+      description: 'List criterias'
+      operationId: 'List criterias'
+      responses:
+        '200':
+          description: 'List criterias'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CriteriaCollection'
   /api/v1/mines:
     get:
       tags:
@@ -178,6 +204,42 @@ paths:
       security:
         -
           apiToken: []
+  /api/v1/reactions:
+    get:
+      tags:
+        - Reaction
+      description: 'List reactions'
+      operationId: 'List reactions'
+      responses:
+        '200':
+          description: 'List reactions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionCollection'
+      security:
+        -
+          apiToken: []
+    post:
+      tags:
+        - Reaction
+      description: 'Create a reaction'
+      operationId: 'Create a reaction'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreReactionRequest'
+      responses:
+        '200':
+          description: 'Create a reaction'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionResource'
+      security:
+        -
+          apiToken: []
   /api/v1/users:
     get:
       tags:
@@ -318,28 +380,6 @@ paths:
       security:
         -
           apiToken: []
-  '/api/v1/users/:user_id/mines':
-    get:
-      tags:
-        - Users
-      description: "List user's mines"
-      operationId: "List user's mines"
-      parameters:
-        -
-          name: ':user_id'
-          in: path
-          description: "User's ID"
-          required: true
-      responses:
-        '200':
-          description: "User's mines"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MineCollection'
-      security:
-        -
-          apiToken: []
 components:
   schemas:
     MobileLoginRequest:
@@ -401,6 +441,24 @@ components:
           enum:
             - validated
             - refused
+      type: object
+    StoreReactionRequest:
+      title: StoreReactionRequest
+      properties:
+        comment:
+          description: Comment
+          type: string
+        criteria_report_id:
+          description: "Criteria Report's id"
+          type: string
+        status:
+          description: "Reaction's status"
+          type: string
+        attachments:
+          description: "Mine's tax number"
+          type: array
+          items:
+            type: string
       type: object
     StoreUserRequest:
       title: StoreUserRequest
@@ -487,6 +545,48 @@ components:
         token:
           type: string
       type: object
+    ChapterCollection:
+      title: ChapterCollection
+      type: array
+      items:
+        $ref: '#/components/schemas/ChapterResource'
+    ChapterResource:
+      title: ChapterResource
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        quota:
+          type: number
+          format: float
+        criterias:
+          type: array
+          items:
+            $ref: '#/components/schemas/CriteriaResource'
+      type: object
+    CriteriaCollection:
+      title: CriteriaCollection
+      type: array
+      items:
+        $ref: '#/components/schemas/CriteriaResource'
+    CriteriaResource:
+      title: CriteriaResource
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        quota:
+          type: number
+          format: float
+        chapter_id:
+          type: integer
+      type: object
     MineCollection:
       title: MineCollection
       type: array
@@ -517,6 +617,27 @@ components:
           type: string
         latitude:
           type: string
+        status:
+          type: string
+          enum:
+            - created
+            - validated
+            - refused
+      type: object
+    ReactionCollection:
+      title: ReactionCollection
+      type: array
+      items:
+        $ref: '#/components/schemas/ReactionResource'
+    ReactionResource:
+      title: ReactionResource
+      properties:
+        id:
+          type: integer
+        comment:
+          type: string
+        criteria_report_id:
+          type: integer
         status:
           type: string
           enum:
@@ -562,8 +683,17 @@ tags:
     name: Authentication
     description: 'Endpoint to handle "Authentication" requests'
   -
+    name: Chapter
+    description: 'Endpoint to handle "Chapter" requests'
+  -
+    name: Criteria
+    description: 'Endpoint to handle "Criteria" requests'
+  -
     name: Mines
     description: 'Endpoint to handle "Mines" request'
+  -
+    name: Reaction
+    description: 'Endpoint to handle "Reaction" requests'
   -
     name: Users
     description: 'Endpoint to handle "Users" request'

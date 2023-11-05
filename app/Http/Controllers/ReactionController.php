@@ -9,7 +9,17 @@ use App\Http\Requests\Api\Reaction\SearchReactionRequest;
 use App\Http\Requests\Api\Reaction\StoreReactionRequest;
 use App\Http\Resources\Reaction\ReactionCollection;
 use App\Http\Resources\Reaction\ReactionResource;
+use OpenApi\Attributes\Get;
+use OpenApi\Attributes\JsonContent;
+use OpenApi\Attributes\Post;
+use OpenApi\Attributes\RequestBody;
+use OpenApi\Attributes\Response as OAResponse;
+use OpenApi\Attributes\Tag;
 
+#[Tag(
+    name:'Reaction',
+    description: 'Endpoint to handle "Reaction" requests'
+)]
 class ReactionController extends Controller
 {
     public function __construct(
@@ -19,6 +29,26 @@ class ReactionController extends Controller
     ){
     }
 
+    #[Get(
+        path: '/api/v1/reactions',
+        operationId: 'List reactions',
+        description: 'List reactions',
+        security: [
+            ['apiToken' => []]
+        ],
+        tags: [
+            'Reaction'
+        ],
+        responses: [
+            new OAResponse(
+                response: '200',
+                description: 'List reactions',
+                content: new JsonContent(
+                    ref: '#/components/schemas/ReactionCollection'
+                )
+            )
+        ]
+    )]
     public function index(SearchReactionRequest $request): ReactionCollection
     {
         $reactions = $this->service->list(
@@ -28,6 +58,31 @@ class ReactionController extends Controller
         return new ReactionCollection($reactions);
     }
 
+    #[Post(
+        path: '/api/v1/reactions',
+        operationId: 'Create a reaction',
+        description: 'Create a reaction',
+        security: [
+            ['apiToken' => []]
+        ],
+        requestBody: new RequestBody(
+            content: new JsonContent(
+                ref: '#/components/schemas/StoreReactionRequest'
+            )
+        ),
+        tags: [
+            'Reaction'
+        ],
+        responses: [
+            new OAResponse(
+                response: '200',
+                description: 'Create a reaction',
+                content: new JsonContent(
+                    ref: '#/components/schemas/ReactionResource'
+                )
+            )
+        ]
+    )]
     public function store(StoreReactionRequest $request): ReactionResource
     {
         $reaction = $this->service->store(
