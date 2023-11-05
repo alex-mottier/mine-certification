@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Chapter;
 use App\Models\Criteria;
 use App\Models\CriteriaReport;
+use App\Models\Mine;
+use App\Models\MineUser;
+use App\Models\Reaction;
 use App\Models\Report;
 use App\Models\User;
 use Faker\Factory;
@@ -20,15 +22,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         $admin = User::factory()->create([
-             'username' => 'amottier',
-             'email' => 'alex_mottier@hotmail.com',
-             'type' => 'administrator',
-             'status' => 'validated',
-             'validated_at' => now()
-         ]);
+        $admin = User::factory()->create([
+            'username' => 'amottier',
+            'email' => 'alex_mottier@hotmail.com',
+            'type' => 'administrator',
+            'status' => 'validated',
+            'validated_at' => now()
+        ]);
 
-        User::factory()->create([
+        $certifier = User::factory()->create([
             'username' => 'test_certifier',
             'email' => 'test_certifier@hotmail.com',
             'type' => 'certifier',
@@ -46,24 +48,43 @@ class DatabaseSeeder extends Seeder
             'validated_by' => $admin->id
         ]);
 
-         $chapters = Chapter::factory(5)->create();
-         foreach ($chapters as $chapter){
-             Criteria::factory(10)->create([
-                 'chapter_id' => $chapter->id
-             ]);
-         }
+        $chapters = Chapter::factory(5)->create();
+        foreach ($chapters as $chapter){
+            Criteria::factory(10)->create([
+                'chapter_id' => $chapter->id
+            ]);
+        }
 
-         $reports = Report::factory(5)->create();
+        $reports = Report::factory(5)->create();
 
-         foreach ($reports as $report){
-             $count = $this->faker(Factory::DEFAULT_LOCALE)->numberBetween(1,20);
-             for ($i = 0; $i < $count; ++$i){
-                 CriteriaReport::factory()->create([
-                     'criteria_id' => Criteria::query()->inRandomOrder()->first()->id,
-                     'report_id' => $report->id
-                 ]);
-             }
+        foreach ($reports as $report){
+            $count = $this->faker(Factory::DEFAULT_LOCALE)->numberBetween(1,20);
+            for ($i = 0; $i < $count; ++$i){
+                CriteriaReport::factory()->create([
+                    'criteria_id' => Criteria::query()->inRandomOrder()->first()->id,
+                    'report_id' => $report->id
+                ]);
+            }
+        }
 
-         }
+        $mines = Mine::query()->get();
+        foreach ($mines as $mine) {
+            MineUser::query()->create([
+                'certifier_id' => $certifier->id,
+                'mine_id' => $mine->id
+            ]);
+        }
+
+        $criteriaReports = CriteriaReport::query()
+            ->inRandomOrder()
+            ->limit(10)
+            ->get();
+
+        foreach ($criteriaReports as $criteriaReport){
+            Reaction::factory()->create([
+                'user_id' => $certifier->id,
+                'criteria_report_id' => $criteriaReport->id
+            ]);
+        }
     }
 }

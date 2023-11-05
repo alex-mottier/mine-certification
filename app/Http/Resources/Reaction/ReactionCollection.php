@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ReactionCollection extends ResourceCollection
 {
+    public static $wrap = 'reactions';
     /**
      * Transform the resource collection into an array.
      *

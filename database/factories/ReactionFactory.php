@@ -2,10 +2,15 @@
 
 namespace Database\Factories;
 
+use App\Domain\Status\Status;
+use App\Domain\Type\UserType;
+use App\Models\CriteriaReport;
+use App\Models\Reaction;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Reaction>
+ * @extends Factory<Reaction>
  */
 class ReactionFactory extends Factory
 {
@@ -17,7 +22,13 @@ class ReactionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'criteria_report_id' => CriteriaReport::factory(),
+            'user_id' => User::factory()->create([
+                'status' => Status::VALIDATED,
+                'type' => UserType::CERTIFIER
+            ]),
+            'status' => $this->faker->randomElement([Status::VALIDATED, Status::REFUSED]),
+            'comment' => $this->faker->text()
         ];
     }
 }

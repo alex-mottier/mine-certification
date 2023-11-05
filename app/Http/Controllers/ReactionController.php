@@ -7,6 +7,8 @@ use App\Domain\Factory\Reaction\StoreReactionDTOFactory;
 use App\Domain\Service\Reaction\ReactionService;
 use App\Http\Requests\Api\Reaction\SearchReactionRequest;
 use App\Http\Requests\Api\Reaction\StoreReactionRequest;
+use App\Http\Resources\Reaction\ReactionCollection;
+use App\Http\Resources\Reaction\ReactionResource;
 
 class ReactionController extends Controller
 {

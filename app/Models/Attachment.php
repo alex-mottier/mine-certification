@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Attachment extends Model
 {
@@ -16,8 +16,8 @@ class Attachment extends Model
         'path'
     ];
 
-    public function criteriaReport(): BelongsTo
+    public function attachable(): MorphTo
     {
-        return $this->belongsTo(CriteriaReport::class);
+        return $this->morphTo();
     }
 }

@@ -2,11 +2,17 @@
 
 namespace App\Http\Resources\Reaction;
 
+use App\Domain\DTO\Reaction\ReactionDTO;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ReactionResource extends JsonResource
 {
+    public static $wrap = 'reaction';
+    /**
+     * @var ReactionDTO $resource
+     */
+    public $resource;
     /**
      * Transform the resource into an array.
      *
@@ -14,6 +20,6 @@ class ReactionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return $this->resource->jsonSerialize();
     }
 }

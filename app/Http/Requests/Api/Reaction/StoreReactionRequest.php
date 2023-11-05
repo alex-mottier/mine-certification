@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\Reaction;
 
 use App\Domain\Status\Status;
-use App\Domain\Type\ReportType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
@@ -18,11 +17,11 @@ class StoreReactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable|string',
-            'type' => ['nullable', new Enum(ReportType::class)],
-            'status' => ['nullable', new Enum(Status::class)],
-            'mines' => 'nullable|array',
-            'mines.*' => 'exists:reports,id|integer'
+            'comment' => 'nullable|string',
+            'criteria_report_id' => 'required|integer|exists:criteria_report,id',
+            'status' => ['required', new Enum(Status::class)],
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file|mimes:jpg,bmp,png,jpeg,pdf',
         ];
     }
 }
