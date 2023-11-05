@@ -6,7 +6,66 @@ use App\Domain\Type\ReportType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
+use OpenApi\Attributes\Items;
+use OpenApi\Attributes\Property;
+use OpenApi\Attributes\Schema;
 
+#[Schema(
+    title: 'StoreReportRequest',
+    properties: [
+        new Property(
+            property: 'name',
+            description: "Report's name",
+            type: 'string'
+        ),
+        new Property(
+            property: 'mine_id',
+            description: "Linked mine",
+            type: 'string'
+        ),
+        new Property(
+            property: 'type',
+            description: "Report's type",
+            type: 'string',
+            enum: [ReportType::REPORT, ReportType::EVALUATION]
+        ),
+        new Property(
+            property: 'criterias',
+            description: "Report based on criterias",
+            type: 'array',
+            items: new Items(
+                properties: [
+                    new Property(
+                        property: 'criteria_id',
+                        type: 'integer',
+                    ),
+                    new Property(
+                        property: 'comment',
+                        type: 'string',
+                    ),
+                    new Property(
+                        property: 'score',
+                        type: 'float',
+                    ),
+                    new Property(
+                        property: 'attachments',
+                        type: 'array',
+                        items: new Items(
+                            type: 'string'
+                        )
+                    ),
+                    new Property(
+                        property: 'criterias',
+                        type: '',
+                    ),
+
+                ],
+                type: 'object'
+            )
+        ),
+    ],
+    type: 'object'
+)]
 class StoreReportRequest extends FormRequest
 {
     /**

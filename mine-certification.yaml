@@ -240,6 +240,83 @@ paths:
       security:
         -
           apiToken: []
+  /api/v1/reports:
+    get:
+      tags:
+        - Report
+      description: 'List reports'
+      operationId: 'List reports'
+      responses:
+        '200':
+          description: 'List reports'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportCollection'
+      security:
+        -
+          apiToken: []
+    post:
+      tags:
+        - Report
+      description: 'Create report'
+      operationId: 'Create report'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreReportRequest'
+      responses:
+        '200':
+          description: 'Report details'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResource'
+      security:
+        -
+          apiToken: []
+  '/api/v1/reports/:report_id':
+    post:
+      tags:
+        - Report
+      description: 'Edit report'
+      operationId: 'Edit report'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReportRequest'
+      responses:
+        '200':
+          description: 'Report details'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResource'
+      security:
+        -
+          apiToken: []
+    patch:
+      tags:
+        - Report
+      description: 'Validate / Refuse report'
+      operationId: 'Validate / Refuse report'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpgradeReportRequest'
+      responses:
+        '200':
+          description: 'Report details'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResource'
+      security:
+        -
+          apiToken: []
   /api/v1/users:
     get:
       tags:
@@ -460,6 +537,82 @@ components:
           items:
             type: string
       type: object
+    StoreReportRequest:
+      title: StoreReportRequest
+      properties:
+        name:
+          description: "Report's name"
+          type: string
+        mine_id:
+          description: 'Linked mine'
+          type: string
+        type:
+          description: "Report's type"
+          type: string
+          enum:
+            - report
+            - evaluation
+        criterias:
+          description: 'Report based on criterias'
+          type: array
+          items:
+            properties:
+              criteria_id:
+                type: integer
+              comment:
+                type: string
+              score:
+                type: number
+                format: float
+              attachments:
+                type: array
+                items:
+                  type: string
+              criterias:
+                type: ''
+            type: object
+      type: object
+    UpdateReportRequest:
+      title: UpdateReportRequest
+      properties:
+        name:
+          description: "Report's name"
+          type: string
+        status:
+          description: "Report's type"
+          type: string
+          enum:
+            - for_validation
+        criterias:
+          description: 'Report based on criterias'
+          type: array
+          items:
+            properties:
+              criteria_id:
+                type: integer
+              comment:
+                type: string
+              score:
+                type: number
+                format: float
+              attachments:
+                type: array
+                items:
+                  type: string
+              criterias:
+                type: ''
+            type: object
+      type: object
+    UpgradeReportRequest:
+      title: UpgradeReportRequest
+      properties:
+        status:
+          description: "Report's status"
+          type: string
+          enum:
+            - validated
+            - refused
+      type: object
     StoreUserRequest:
       title: StoreUserRequest
       properties:
@@ -645,6 +798,55 @@ components:
             - validated
             - refused
       type: object
+    ReportCollection:
+      title: ReportCollection
+      type: array
+      items:
+        $ref: '#/components/schemas/ReportResource'
+    ReportResource:
+      title: ReportResource
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        score:
+          type: number
+          format: float
+        type:
+          type: string
+          enum:
+            - report
+            - evaluation
+        status:
+          type: string
+          enum:
+            - created
+            - for_validation
+            - validated
+            - refused
+        mine_id:
+          type: integer
+        criterias:
+          description: 'Report based on criterias'
+          type: array
+          items:
+            properties:
+              criteria_id:
+                type: integer
+              comment:
+                type: string
+              score:
+                type: number
+                format: float
+              attachments:
+                type: array
+                items:
+                  type: string
+              criterias:
+                type: ''
+            type: object
+      type: object
     UserCollection:
       title: UserCollection
       type: array
@@ -694,6 +896,9 @@ tags:
   -
     name: Reaction
     description: 'Endpoint to handle "Reaction" requests'
+  -
+    name: Report
+    description: 'Endpoint to handle "Report" requests'
   -
     name: Users
     description: 'Endpoint to handle "Users" request'

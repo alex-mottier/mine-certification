@@ -6,7 +6,61 @@ use App\Domain\Status\Status;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
+use OpenApi\Attributes\Items;
+use OpenApi\Attributes\Property;
+use OpenApi\Attributes\Schema;
 
+#[Schema(
+    title: 'UpdateReportRequest',
+    properties: [
+        new Property(
+            property: 'name',
+            description: "Report's name",
+            type: 'string'
+        ),
+        new Property(
+            property: 'status',
+            description: "Report's type",
+            type: 'string',
+            enum: [Status::FOR_VALIDATION]
+        ),
+        new Property(
+            property: 'criterias',
+            description: "Report based on criterias",
+            type: 'array',
+            items: new Items(
+                properties: [
+                    new Property(
+                        property: 'criteria_id',
+                        type: 'integer',
+                    ),
+                    new Property(
+                        property: 'comment',
+                        type: 'string',
+                    ),
+                    new Property(
+                        property: 'score',
+                        type: 'float',
+                    ),
+                    new Property(
+                        property: 'attachments',
+                        type: 'array',
+                        items: new Items(
+                            type: 'string'
+                        )
+                    ),
+                    new Property(
+                        property: 'criterias',
+                        type: '',
+                    ),
+
+                ],
+                type: 'object'
+            )
+        ),
+    ],
+    type: 'object'
+)]
 class UpdateReportRequest extends FormRequest
 {
     /**

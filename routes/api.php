@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\CriteriaController;
 use App\Http\Controllers\MineController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
@@ -71,6 +72,13 @@ Route::prefix('v1')->middleware('api')->group(function () {
                     Route::post('', 'assign');
                     Route::delete('{userId}', 'revoke');
                 });
+            });
+        });
+
+        Route::prefix('notifications')->group(function(){
+            Route::controller(NotificationController::class)->group(function() {
+                Route::get('', 'index');
+                Route::post('', 'markAsRead');
             });
         });
 

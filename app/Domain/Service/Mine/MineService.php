@@ -18,6 +18,7 @@ use App\Exceptions\Status\BadStatusException;
 use App\Exceptions\User\UserNotFoundException;
 use App\Models\Mine;
 use App\Models\User;
+use App\Notifications\AssignedMine;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -173,6 +174,7 @@ class MineService
             }
 
             $mine->certifiers()->attach($certifier->id);
+            $certifier->notify(new AssignedMine($mine));
         }
 
         return $this->mineDetailFactory->fromModel($mine);

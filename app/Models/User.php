@@ -24,6 +24,7 @@ class User extends Authenticatable
     use TwoFactorAuthenticatable;
     use SoftDeletes;
     use HasCoordinates;
+    use Notifiable;
 
 
     /**
