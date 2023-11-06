@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Domain\Status\Status;
 use App\Domain\Trait\HasCoordinates;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -42,5 +43,10 @@ class Mine extends Model
     public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
+    }
+
+    public function scopeIsValidated(Builder $query): void
+    {
+        $query->where('status',Status::VALIDATED->value);
     }
 }

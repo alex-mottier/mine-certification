@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <!-- Styles -->
-        @livewireStyles
+        @filamentStyles
     </head>
     <body class="font-sans antialiased">
         <x-banner />
@@ -33,13 +33,13 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main class="container mx-auto">
                 {{ $slot }}
             </main>
         </div>
 
         @stack('modals')
 
-        @livewireScripts
+        @filamentScripts
     </body>
 </html>
