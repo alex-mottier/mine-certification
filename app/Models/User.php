@@ -110,6 +110,11 @@ class User extends Authenticatable
             ->having('distance', '<', $radius);
     }
 
+    public function scopeIsAdmin(Builder $query): void
+    {
+        $query->where('type', UserType::ADMINISTRATOR->value);
+    }
+
     public function isCertifier(): bool
     {
         return $this->type === UserType::CERTIFIER;

@@ -67,6 +67,7 @@ Route::prefix('v1')->middleware('api')->group(function () {
         });
         Route::prefix('mines')->group(function(){
             Route::controller(MineController::class)->group(function() {
+                Route::post('{mineId}', 'forValidationMine');
                 Route::patch('{mineId}', 'validateMine');
                 Route::prefix('{mineId}/users')->group(function(){
                     Route::post('', 'assign');

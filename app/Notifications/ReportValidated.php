@@ -2,11 +2,11 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
+use App\Models\Report;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class UserToValidate extends Notification
+class ReportValidated extends Notification
 {
     use Queueable;
 
@@ -14,7 +14,7 @@ class UserToValidate extends Notification
      * Create a new notification instance.
      */
     public function __construct(
-        protected User $user
+        protected Report $report
     ){
     }
 
@@ -36,8 +36,8 @@ class UserToValidate extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'A user has been created. Verify it.',
-            'user_id' => $this->user->id
+            'message' => 'A report has been validated by an administrator. Please check it.',
+            'report_id' => $this->report->id
         ];
     }
 }

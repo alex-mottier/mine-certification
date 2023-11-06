@@ -130,21 +130,16 @@ class MineService
             throw new MineNotFoundException();
         }
 
-        if($mine->status !== Status::FOR_VALIDATION){
-            throw new BadStatusException(
-                'Mine has to be in status: '. Status::FOR_VALIDATION->value .
-                '. Current status: '. $mine->status->value
-            );
-        }
-        if(
-            $request->getStatus()->value !== Status::VALIDATED->value &&
-            $request->getStatus()->value !== Status::REFUSED->value
-        ){
-            throw new BadStatusException(
-                'Status '.Status::VALIDATED->value . ' or ' . Status::REFUSED->value . ' should be provided.'
-            );
-        }
-
+        match($request->getStatus()){
+            Status::VALIDATED, Status::REFUSED => $this->checkValidatedRefusedStatus($mine->status),
+            Status::FOR_VALIDATION => $this->checkForValidationStatus($mine),
+            default => throw new BadStatusException(
+                'Status '.Status::FOR_VALIDATION->value .
+                ', '.Status::VALIDATED->value .
+                ' or ' . Status::REFUSED->value . ' should be provided.'
+            )
+        };
+        
         $mine->status = $request->getStatus();
         $mine->save();
 
@@ -214,6 +209,37 @@ class MineService
         }
 
         return $mines;
+    }
+
+    private function checkValidatedRefusedStatus(Status $mineStatus): void
+    {
+        if(!$this->authUser->isAdmin()){
+            throw new UnauthorizedException();
+        }
+
+        if($mineStatus !== Status::FOR_VALIDATION){
+            throw new BadStatusException(
+                'Mine has to be in status: '. Status::FOR_VALIDATION->value .
+                '. Current status: '. $mineStatus->value
+            );
+        }
+    }
+
+    private function checkForValidationStatus(Mine $mine): void
+    {
+        if(
+            $mine->created_by !== $this->authUser->id &&
+            !$this->authUser->hasMine($mine->id)
+        ){
+            throw new UnauthorizedException();
+        }
+
+        if($mine->status === Status::VALIDATED){
+            throw new BadStatusException(
+                'Mine has to be in status: '. Status::CREATED->value . ' or ' . Status::REFUSED->value .
+                '. Current status: '. $mine->status->value
+            );
+        }
     }
 
 }

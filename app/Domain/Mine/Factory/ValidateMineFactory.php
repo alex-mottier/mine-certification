@@ -12,7 +12,7 @@ class ValidateMineFactory
     public function fromRequest(ValidateMineRequest $request): ValidateMine
     {
         return new ValidateMine(
-            status: Status::tryFrom($request->validated('status'))
+            status: Status::from($request->validated('status'))
         );
     }
 }

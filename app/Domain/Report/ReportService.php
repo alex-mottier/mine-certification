@@ -17,8 +17,11 @@ use App\Models\CriteriaReport;
 use App\Models\Mine;
 use App\Models\Report;
 use App\Models\User;
+use App\Notifications\ReportToValidate;
+use App\Notifications\ReportValidated;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
 
 readonly class ReportService
 {
@@ -161,16 +164,29 @@ readonly class ReportService
         };
 
         if($upgrade->getStatus() === Status::VALIDATED){
-            $this->calculateScore();
+            //$this->calculateScore();
+            /**
+             * @var Mine $mine
+             */
+            $mine = $report->mine()->first();
+            Notification::send($mine->certifiers()->get(), new ReportValidated($report));
         }
 
         $report->status = $upgrade->getStatus();
         $report->save();
 
+        if($upgrade->getStatus() === Status::FOR_VALIDATION){
+            /**
+             * @var Collection<User> $administrators
+             */
+            $administrators = User::query()->isAdmin()->get();
+            Notification::send($administrators, new ReportToValidate($report));
+        }
+
         return $this->factory->fromModel($report);
     }
 
-    private function isCertifierOrOwner(array $certifiers, User $user, Report $report): bool
+    private function isCertifierOrOwner(Collection $certifiers, User $user, Report $report): bool
     {
         if($this->isCertifier($certifiers, $user)){
             return true;
@@ -202,9 +218,9 @@ readonly class ReportService
         $mine = $report->mine()->first();
 
         /**
-         * @var User[] $certifiers
+         * @var Collection<User> $certifiers
          */
-        $certifiers = $mine->certifiers()->get()->toArray();
+        $certifiers = $mine->certifiers()->get();
         if(
             !$this->isCertifierOrOwner($certifiers, $upgrade->getUser(), $report) &&
             ($mine->status !== Status::CREATED ||

@@ -14,7 +14,9 @@ use App\Exceptions\Auth\UnauthorizedException;
 use App\Exceptions\Status\BadStatusException;
 use App\Exceptions\User\UserNotFoundException;
 use App\Models\User;
+use App\Notifications\UserToValidate;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Support\Facades\Notification;
 
 readonly class UserService
 {
@@ -48,6 +50,10 @@ readonly class UserService
                 $user->status = Status::VALIDATED;
                 $user->validated_by = $this->authUser->id;
                 $user->validated_at = now();
+            }
+            else{
+                $administrators = User::query()->isAdmin()->get();
+                Notification::send($administrators, new UserToValidate($user));
             }
 
             $user->save();

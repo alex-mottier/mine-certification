@@ -166,11 +166,11 @@ class MineController extends Controller
 
         return new MineResource($mine);
     }
-
+    
     #[Patch(
         path: '/api/v1/mines/:mine_id',
-        operationId: 'Validate / Refuse a mine',
-        description: 'Validate / Refuse a mine',
+        operationId: 'For Validation / Validate / Refuse a mine',
+        description: 'For Validation / Validate / Refuse a mine',
         security: [
             ['apiToken' => []]
         ],

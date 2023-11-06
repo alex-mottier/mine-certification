@@ -2,9 +2,8 @@
 
 namespace App\Notifications;
 
+use App\Models\Mine;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class MineToValidate extends Notification
@@ -14,9 +13,9 @@ class MineToValidate extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
-    {
-        //
+    public function __construct(
+        protected Mine $mine
+    ){
     }
 
     /**
@@ -26,18 +25,7 @@ class MineToValidate extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return ['database'];
     }
 
     /**
@@ -48,7 +36,8 @@ class MineToValidate extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'content' => 'There is a mine to validate.',
+            'mine_id' => $this->mine->id
         ];
     }
 }
