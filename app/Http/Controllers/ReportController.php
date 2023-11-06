@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Factory\Report\SearchReportDTOFactory;
-use App\Domain\Factory\Report\StoreReportDTOFactory;
-use App\Domain\Factory\Report\UpdateReportDTOFactory;
-use App\Domain\Factory\Report\UpgradeReportDTOFactory;
-use App\Domain\Service\Report\ReportService;
-use App\Http\Requests\Api\Report\SearchReportRequest;
-use App\Http\Requests\Api\Report\StoreReportRequest;
-use App\Http\Requests\Api\Report\UpdateReportRequest;
-use App\Http\Requests\Api\Report\UpgradeReportRequest;
+use App\Domain\Report\Factory\SearchReportFactory;
+use App\Domain\Report\Factory\StoreReportFactory;
+use App\Domain\Report\Factory\UpdateReportFactory;
+use App\Domain\Report\Factory\UpgradeReportFactory;
+use App\Domain\Report\ReportService;
+use App\Http\Requests\Report\SearchReportRequest;
+use App\Http\Requests\Report\StoreReportRequest;
+use App\Http\Requests\Report\UpdateReportRequest;
+use App\Http\Requests\Report\UpgradeReportRequest;
 use App\Http\Resources\Report\ReportCollection;
 use App\Http\Resources\Report\ReportResource;
 use OpenApi\Attributes\Get;
@@ -28,11 +28,11 @@ use OpenApi\Attributes\Tag;
 class ReportController extends Controller
 {
     public function __construct(
-        protected readonly ReportService $service,
-        protected readonly SearchReportDTOFactory $searchFactory,
-        protected readonly StoreReportDTOFactory $storeFactory,
-        protected readonly UpdateReportDTOFactory $updateFactory,
-        protected readonly UpgradeReportDTOFactory $upgradeFactory,
+        protected readonly ReportService        $service,
+        protected readonly SearchReportFactory  $searchFactory,
+        protected readonly StoreReportFactory   $storeFactory,
+        protected readonly UpdateReportFactory  $updateFactory,
+        protected readonly UpgradeReportFactory $upgradeFactory,
     )
     {
     }

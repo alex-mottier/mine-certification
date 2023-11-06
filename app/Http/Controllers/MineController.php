@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Factory\Mine\AssignMineDTOFactory;
-use App\Domain\Factory\Mine\SearchMineDTOFactory;
-use App\Domain\Factory\Mine\StoreMineDTOFactory;
-use App\Domain\Factory\Mine\ValidateMineDTOFactory;
-use App\Domain\Service\Mine\MineService;
-use App\Http\Requests\Api\Mine\AssignMineRequest;
-use App\Http\Requests\Api\Mine\RevokeMineRequest;
-use App\Http\Requests\Api\Mine\SearchMineRequest;
-use App\Http\Requests\Api\Mine\StoreMineRequest;
-use App\Http\Requests\Api\Mine\ValidateMineRequest;
+use App\Domain\Mine\Factory\AssignMineFactory;
+use App\Domain\Mine\Factory\SearchMineFactory;
+use App\Domain\Mine\Factory\StoreMineFactory;
+use App\Domain\Mine\Factory\ValidateMineFactory;
+use App\Domain\Mine\MineService;
+use App\Http\Requests\Mine\AssignMineRequest;
+use App\Http\Requests\Mine\RevokeMineRequest;
+use App\Http\Requests\Mine\SearchMineRequest;
+use App\Http\Requests\Mine\StoreMineRequest;
+use App\Http\Requests\Mine\ValidateMineRequest;
 use App\Http\Resources\Mine\MineCollection;
 use App\Http\Resources\Mine\MineDetailResource;
 use App\Http\Resources\Mine\MineResource;
@@ -34,11 +34,11 @@ use OpenApi\Attributes\Tag;
 class MineController extends Controller
 {
     public function __construct(
-        protected readonly MineService $service,
-        protected readonly SearchMineDTOFactory $searchFactory,
-        protected readonly StoreMineDTOFactory $storeFactory,
-        protected readonly ValidateMineDTOFactory $validateFactory,
-        protected readonly AssignMineDTOFactory $assignFactory,
+        protected readonly MineService         $service,
+        protected readonly SearchMineFactory   $searchFactory,
+        protected readonly StoreMineFactory    $storeFactory,
+        protected readonly ValidateMineFactory $validateFactory,
+        protected readonly AssignMineFactory   $assignFactory,
     ){
     }
 

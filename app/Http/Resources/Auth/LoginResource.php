@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\Auth;
 
-use App\Domain\Status\Status;
-use App\Domain\Type\UserType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes\Property;

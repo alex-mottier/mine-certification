@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Factory\User\SearchUserDTOFactory;
-use App\Domain\Factory\User\StoreUserDTOFactory;
-use App\Domain\Factory\User\UpdateUserDTOFactory;
-use App\Domain\Factory\User\ValidateUserDTOFactory;
-use App\Domain\Service\User\UserService;
-use App\Http\Requests\Api\User\SearchUserRequest;
-use App\Http\Requests\Api\User\StoreUserRequest;
-use App\Http\Requests\Api\User\UpdateUserRequest;
-use App\Http\Requests\Api\User\ValidateUserRequest;
+use App\Domain\User\Factory\SearchUserFactory;
+use App\Domain\User\Factory\StoreUserFactory;
+use App\Domain\User\Factory\UpdateUserFactory;
+use App\Domain\User\Factory\ValidateUserFactory;
+use App\Domain\User\UserService;
+use App\Http\Requests\User\SearchUserRequest;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Requests\User\ValidateUserRequest;
 use App\Http\Resources\User\UserCollection;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\JsonResponse;
@@ -34,11 +34,11 @@ use Symfony\Component\HttpFoundation\Response;
 class UserController extends Controller
 {
     public function __construct(
-        protected readonly UserService $service,
-        protected readonly StoreUserDTOFactory $storeFactory,
-        protected readonly SearchUserDTOFactory $searchFactory,
-        protected readonly ValidateUserDTOFactory $validateFactory,
-        protected readonly UpdateUserDTOFactory $updateFactory,
+        protected readonly UserService         $service,
+        protected readonly StoreUserFactory    $storeFactory,
+        protected readonly SearchUserFactory   $searchFactory,
+        protected readonly ValidateUserFactory $validateFactory,
+        protected readonly UpdateUserFactory   $updateFactory,
     )
     {
     }

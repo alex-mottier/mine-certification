@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Domain\Type\ReportType;
+use App\Domain\Report\ReportType;
 use App\Models\Criteria;
 use App\Models\Mine;
 use App\Models\Report;

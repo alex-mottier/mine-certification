@@ -204,6 +204,38 @@ paths:
       security:
         -
           apiToken: []
+  /api/v1/notifications:
+    get:
+      tags:
+        - Notification
+      description: 'List notifications'
+      operationId: 'List notifications'
+      responses:
+        '200':
+          description: 'List notifications'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationCollection'
+      security:
+        -
+          apiToken: []
+    post:
+      tags:
+        - Notification
+      description: 'Mark notifications as read'
+      operationId: 'Mark notifications as read'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkNotificationAsReadRequest'
+      responses:
+        '204':
+          description: 'No content.'
+      security:
+        -
+          apiToken: []
   /api/v1/reactions:
     get:
       tags:
@@ -519,6 +551,15 @@ components:
             - validated
             - refused
       type: object
+    MarkNotificationAsReadRequest:
+      title: MarkNotificationAsReadRequest
+      properties:
+        notifications:
+          description: "Array of notification's ID"
+          type: array
+          items:
+            type: integer
+      type: object
     StoreReactionRequest:
       title: StoreReactionRequest
       properties:
@@ -777,6 +818,22 @@ components:
             - validated
             - refused
       type: object
+    NotificationCollection:
+      title: NotificationCollection
+      type: array
+      items:
+        $ref: '#/components/schemas/NotificationResource'
+    NotificationResource:
+      title: NotificationResource
+      properties:
+        id:
+          type: string
+        content:
+          description: 'Content of the notification'
+          type: array
+          items:
+            type: string
+      type: object
     ReactionCollection:
       title: ReactionCollection
       type: array
@@ -893,6 +950,9 @@ tags:
   -
     name: Mines
     description: 'Endpoint to handle "Mines" request'
+  -
+    name: Notification
+    description: 'Endpoint to handle "Notification" requests'
   -
     name: Reaction
     description: 'Endpoint to handle "Reaction" requests'

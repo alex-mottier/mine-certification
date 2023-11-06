@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Chapter;
 
-use App\Domain\DTO\Chapter\ChapterDTO;
+use App\Domain\Chapter\Model\ChapterDTO;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes\Items;

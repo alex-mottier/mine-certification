@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Criteria;
 
-use App\Domain\DTO\Criteria\CriteriaDTO;
+use App\Domain\Criteria\Model\CriteriaDTO;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes\Property;

@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Report;
 
-use App\Domain\DTO\Report\ReportDTO;
+use App\Domain\Report\Model\ReportDTO;
+use App\Domain\Report\ReportType;
 use App\Domain\Status\Status;
-use App\Domain\Type\ReportType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes\Items;

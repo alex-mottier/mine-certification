@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Factory\Criteria\SearchCriteriaDTOFactory;
-use App\Domain\Service\Criteria\CriteriaService;
-use App\Http\Requests\Api\Criteria\SearchCriteriaRequest;
+use App\Domain\Criteria\CriteriaService;
+use App\Domain\Criteria\Factory\SearchCriteriaFactory;
+use App\Http\Requests\Criteria\SearchCriteriaRequest;
 use App\Http\Resources\Criteria\CriteriaCollection;
 use OpenApi\Attributes\Get;
 use OpenApi\Attributes\JsonContent;
@@ -19,8 +19,8 @@ class CriteriaController extends Controller
 {
 
     public function __construct(
-        protected CriteriaService $service,
-        protected SearchCriteriaDTOFactory $factory,
+        protected CriteriaService       $service,
+        protected SearchCriteriaFactory $factory,
     )
     {
     }

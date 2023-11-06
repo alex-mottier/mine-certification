@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\User;
 
-use App\Domain\DTO\User\UserDTO;
 use App\Domain\Status\Status;
-use App\Domain\Type\UserType;
+use App\Domain\User\Model\UserDTO;
+use App\Domain\User\UserType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes\Property;

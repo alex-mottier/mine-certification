@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Domain\Status\Status;
 use App\Domain\Trait\HasCoordinates;
-use App\Domain\Type\UserType;
+use App\Domain\User\UserType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

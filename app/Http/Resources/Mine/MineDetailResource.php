@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Mine;
 
-use App\Domain\DTO\Mine\MineDetailDTO;
+use App\Domain\Mine\Model\MineDetail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -32,7 +32,7 @@ class MineDetailResource extends JsonResource
 {
     public static $wrap = '';
     /**
-     * @var MineDetailDTO $resource
+     * @var MineDetail $resource
      */
     public $resource;
     /**

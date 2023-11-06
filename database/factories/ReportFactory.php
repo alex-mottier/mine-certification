@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Domain\Report\ReportType;
 use App\Domain\Status\Status;
-use App\Domain\Type\ReportType;
 use App\Models\Mine;
 use App\Models\Report;
 use Illuminate\Database\Eloquent\Factories\Factory;

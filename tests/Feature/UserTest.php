@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Domain\Status\Status;
-use App\Domain\Type\UserType;
+use App\Domain\User\UserType;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -150,7 +150,7 @@ class UserTest extends TestCase
     {
         $count = User::query()->count();
         $this->assertDatabaseCount(User::class, $count);
-        
+
         $response = $this->put($this->uriWithId);
         $response->assertRedirect('/login');
 

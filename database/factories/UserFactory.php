@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Domain\Status\Status;
-use App\Domain\Type\UserType;
+use App\Domain\User\UserType;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;

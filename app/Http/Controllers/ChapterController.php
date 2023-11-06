@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Factory\Chapter\SearchChapterDTOFactory;
-use App\Domain\Service\Chapter\ChapterService;
-use App\Http\Requests\Api\Chapter\SearchChapterRequest;
+use App\Domain\Chapter\ChapterService;
+use App\Domain\Chapter\Factory\SearchChapterFactory;
+use App\Http\Requests\Chapter\SearchChapterRequest;
 use App\Http\Resources\Chapter\ChapterCollection;
 use OpenApi\Attributes\Get;
 use OpenApi\Attributes\JsonContent;
@@ -18,8 +18,8 @@ use OpenApi\Attributes\Tag;
 class ChapterController extends Controller
 {
     public function __construct(
-        protected ChapterService $service,
-        protected SearchChapterDTOFactory $searchFactory,
+        protected ChapterService       $service,
+        protected SearchChapterFactory $searchFactory,
     )
     {
     }

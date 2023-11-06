@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Factory\Auth\MobileLoginFactory;
-use App\Domain\Service\Auth\AuthService;
-use App\Http\Requests\Api\Auth\MobileLoginRequest;
+use App\Domain\Auth\AuthService;
+use App\Domain\Auth\Factory\MobileLoginFactory;
+use App\Http\Requests\Auth\MobileLoginRequest;
 use App\Http\Resources\Auth\LoginResource;
 use OpenApi\Attributes\JsonContent;
 use OpenApi\Attributes\Post;

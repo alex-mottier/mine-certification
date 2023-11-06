@@ -3,7 +3,7 @@
 namespace Tests;
 
 use App\Domain\Status\Status;
-use App\Domain\Type\UserType;
+use App\Domain\User\UserType;
 use App\Models\Mine;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

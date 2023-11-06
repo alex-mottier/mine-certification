@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Reaction;
 
-use App\Domain\DTO\Reaction\ReactionDTO;
+use App\Domain\Reaction\Model\ReactionDTO;
 use App\Domain\Status\Status;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
