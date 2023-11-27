@@ -12,6 +12,15 @@ class Institution extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'description',
+        'type',
+        'status',
+        'validated_by',
+        'validated_at'
+    ];
+
     protected $casts = [
         'status' => Status::class,
         'type' => InstitutionType::class

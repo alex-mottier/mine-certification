@@ -2,6 +2,7 @@
 
 namespace App\Domain\Mine\Model;
 
+use App\Domain\Mine\MineType;
 use App\Domain\Status\Status;
 use JsonSerializable;
 
@@ -14,7 +15,9 @@ readonly class StoreMine implements JsonSerializable
         protected string $taxNumber,
         protected float $longitude,
         protected float $latitude,
-        protected Status $status
+        protected Status $status,
+        protected MineType $type,
+        protected ?string $imagePath
     ){
     }
 
@@ -27,7 +30,9 @@ readonly class StoreMine implements JsonSerializable
             'tax_number' => $this->taxNumber,
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
-            'status' => $this->status
+            'status' => $this->status,
+            'type' => $this->type,
+            'image_path' => $this->imagePath
         ];
     }
 }

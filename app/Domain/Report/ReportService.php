@@ -60,6 +60,7 @@ readonly class ReportService
 
         $certifiers = $mine->certifiers()->get();
         if(
+            $this->authUser?->id != $mine->created_by &&
             !$this->isCertifier($certifiers, $this->authUser) &&
             $store->getType() === ReportType::EVALUATION
         ){
@@ -74,9 +75,25 @@ readonly class ReportService
          * @var Report $report
          */
         $report = Report::query()->create($store->jsonSerialize());
+        if($report->status === Status::FOR_VALIDATION && $report->type === ReportType::EVALUATION){
+            $report->mine()->update([
+                'status' => Status::FOR_VALIDATION
+            ]);
+        }
+        else if(
+            $report->status === Status::CREATED &&
+            $report->type === ReportType::EVALUATION &&
+            $mine->status === Status::FOR_VALIDATION
+        ){
+            $report->mine()->update([
+                'status' => Status::CREATED
+            ]);
+        }
 
+        $score = 0;
         foreach ($store->getCriterias() as $criteria) {
             $attributes = array_merge($criteria->jsonSerialize(), ['report_id' => $report->id]);
+            $score += $criteria->getScore();
             /**
              * @var CriteriaReport $criteriaReport
              */
@@ -92,6 +109,11 @@ readonly class ReportService
                 ]);
             }
         }
+        if($store->getCriterias()) {
+            $report->score = $score / count($store->getCriterias());
+            $report->save();
+        }
+
         return $this->factory->fromModel($report);
     }
 
@@ -104,14 +126,38 @@ readonly class ReportService
         if(!$report){
             throw new ReportNotFoundException();
         }
-
-        if($this->authUser->id !== $report->created_by){
+        $mine = $report->mine()->first();
+        if(
+            $this->authUser->id !== $report->created_by &&
+            !$this->authUser->hasMine($mine->id) &&
+            !$this->authUser->isAdmin()
+        ){
             throw new UnauthorizedException();
         }
         $report->update($update->jsonSerialize());
 
+        if(
+            $report->status === Status::FOR_VALIDATION &&
+            $report->type === ReportType::EVALUATION
+        ){
+            $report->mine()->update([
+                'status' => Status::FOR_VALIDATION
+            ]);
+        }
+        else if(
+            $report->status === Status::CREATED &&
+            $report->type === ReportType::EVALUATION &&
+            $mine->status === Status::FOR_VALIDATION
+        ){
+            $report->mine()->update([
+                'status' => Status::CREATED
+            ]);
+        }
+
+        $score = 0;
         foreach ($update->getCriterias() as $criteria) {
             $attributes = array_merge($criteria->jsonSerialize(), ['report_id' => $report->id]);
+            $score += $criteria->getScore();
             /**
              * @var CriteriaReport $criteriaReport
              */
@@ -140,6 +186,12 @@ readonly class ReportService
                 }
             }
         }
+
+        if($update->getCriterias()) {
+            $report->score = $score / count($update->getCriterias());
+            $report->save();
+        }
+
         return $this->factory->fromModel($report);
     }
 
@@ -170,6 +222,11 @@ readonly class ReportService
              */
             $mine = $report->mine()->first();
             Notification::send($mine->certifiers()->get(), new ReportValidated($report));
+
+//            $evaluation = $mine->evaluation()->first();
+//            $reports = $mine->reports()->where('status', Status::VALIDATED)->pluck('score');
+//            $mine->score = (array_sum($reports->toArray()) + $report->score + $evaluation->score) / ($reports->count() + 2);
+//            $mine->save();
         }
 
         $report->status = $upgrade->getStatus();

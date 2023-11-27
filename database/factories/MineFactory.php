@@ -24,7 +24,6 @@ class MineFactory extends Factory
     {
         $status = $this->faker->randomElement([
             Status::FOR_VALIDATION,
-            Status::VALIDATED,
             Status::REFUSED,
             Status::CREATED
         ]);

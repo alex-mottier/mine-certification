@@ -18,8 +18,25 @@ class UpdateUserFactory
             fullname: $request->validated('fullname'),
             email: $request->validated('email'),
             password: $request->validated('password') ? Hash::make($request->validated('password')) : null,
+            longitude: $request->validated('longitude'),
+            latitude: $request->validated('latitude'),
             type: UserType::tryFrom($request->validated('type')),
             status: Status::tryFrom($request->validated('status'))
+        );
+    }
+
+    public function fromArray(array $form): UpdateUser
+    {
+        return new UpdateUser(
+            userId: $form['id'],
+            username: $form['username'],
+            fullname: $form['fullname'],
+            email: $form['email'],
+            password: $form['password'] ? Hash::make($form['password']) : null,
+            longitude: $form['longitude'],
+            latitude: $form['latitude'],
+            type: UserType::tryFrom($form['type']),
+            status: Status::FOR_VALIDATION
         );
     }
 }

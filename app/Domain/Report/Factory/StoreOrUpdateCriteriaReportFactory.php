@@ -16,4 +16,14 @@ class StoreOrUpdateCriteriaReportFactory
             attachments: array_key_exists('attachments', $criteria) ? $criteria['attachments']: [],
         );
     }
+
+    public function fromFront(array $report): StoreOrUpdateCriteriaReport
+    {
+        return new StoreOrUpdateCriteriaReport(
+            criteriaId: array_key_exists('criteria', $report) ? $report['criteria']: null,
+            comment: array_key_exists('comment', $report) ? $report['comment']: null,
+            score: array_key_exists('score', $report) ? $report['score']: null,
+            attachments: array_key_exists('attachments', $report) ? $report['attachments']: [],
+        );
+    }
 }

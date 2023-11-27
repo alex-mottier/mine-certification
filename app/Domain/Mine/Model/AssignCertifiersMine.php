@@ -2,7 +2,7 @@
 
 namespace App\Domain\Mine\Model;
 
-readonly class AssignMine
+readonly class AssignCertifiersMine
 {
     /**
      * @param int[] $certifiers

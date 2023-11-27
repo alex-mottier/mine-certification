@@ -125,14 +125,19 @@ class User extends Authenticatable
         return $this->type === UserType::CERTIFIER;
     }
 
-    public function hasMine(int $mineId): bool
+    public function hasMine(?int $mineId): bool
     {
+        if(!$mineId){
+            return false;
+        }
+
         foreach ($this->mines()->get() as $mine){
             if($mine->id == $mineId){
                 return true;
 
             }
         }
+
         return false;
     }
 }

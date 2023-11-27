@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\Mine;
 
+use App\Domain\Mine\MineType;
 use App\Exceptions\FailedValidationException;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 use OpenApi\Attributes\Property;
 use OpenApi\Attributes\Schema;
 
@@ -31,6 +33,16 @@ use OpenApi\Attributes\Schema;
             property: 'tax_number',
             description: "Mine's tax number",
             type: 'string'
+        ),
+        new Property(
+            property: 'type',
+            description: "Mine's type",
+            type: 'string',
+            enum: [
+                MineType::INDUSTRIAL,
+                MineType::ARTISANAL,
+                MineType::COOPERATIVE
+            ]
         ),
         new Property(
             property: 'longitude',
@@ -59,6 +71,7 @@ class StoreMineRequest extends FormRequest
             'email' => 'required|email',
             'phone_number' => 'required|string',
             'tax_number' => 'required|string',
+            'type' => ['required', new Enum(MineType::class)],
             'longitude' => [
                 'required',
                 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'

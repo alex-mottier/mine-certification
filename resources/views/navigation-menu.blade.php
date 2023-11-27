@@ -19,9 +19,15 @@
                         <x-nav-link href="{{ route('users') }}" wire:navigate :active="request()->routeIs('users')">
                             {{ __('Users') }}
                         </x-nav-link>
+                        <x-nav-link href="{{ route('report.home') }}" wire:navigate :active="request()->routeIs('report.home')">
+                            {{ __('Reports') }}
+                        </x-nav-link>
                     @endif
+                    <x-nav-link href="{{ route('institution.home') }}" wire:navigate :active="request()->routeIs('institution.home')">
+                        {{ __('Institutions') }}
+                    </x-nav-link>
                     @auth
-                        <form method="POST" action="{{ route('logout') }}" class="flex justify-end w-[70rem] mr-24" x-data>
+                        <form method="POST" action="{{ route('logout') }}" class="flex justify-end w-[50rem] mr-24" x-data>
                             @csrf
 
                             <x-nav-link href="{{ route('logout') }}"
@@ -30,7 +36,7 @@
                             </x-nav-link>
                         </form>
                     @else
-                        <div class="flex justify-end w-[70rem] mr-24">
+                        <div class="flex justify-end w-[60rem] mr-24">
                             <x-nav-link href="{{ route('login') }}" wire:navigate :active="request()->routeIs('login')">
                                 {{ __('Login') }}
                             </x-nav-link>

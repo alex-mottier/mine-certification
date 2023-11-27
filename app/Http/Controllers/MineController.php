@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Mine\Factory\AssignMineFactory;
+use App\Domain\Mine\Factory\AssignCertifiersMineFactory;
 use App\Domain\Mine\Factory\SearchMineFactory;
 use App\Domain\Mine\Factory\StoreMineFactory;
 use App\Domain\Mine\Factory\ValidateMineFactory;
@@ -34,11 +34,11 @@ use OpenApi\Attributes\Tag;
 class MineController extends Controller
 {
     public function __construct(
-        protected readonly MineService         $service,
-        protected readonly SearchMineFactory   $searchFactory,
-        protected readonly StoreMineFactory    $storeFactory,
-        protected readonly ValidateMineFactory $validateFactory,
-        protected readonly AssignMineFactory   $assignFactory,
+        protected readonly MineService                 $service,
+        protected readonly SearchMineFactory           $searchFactory,
+        protected readonly StoreMineFactory            $storeFactory,
+        protected readonly ValidateMineFactory         $validateFactory,
+        protected readonly AssignCertifiersMineFactory $assignFactory,
     ){
     }
 
@@ -166,7 +166,7 @@ class MineController extends Controller
 
         return new MineResource($mine);
     }
-    
+
     #[Patch(
         path: '/api/v1/mines/:mine_id',
         operationId: 'For Validation / Validate / Refuse a mine',
@@ -240,7 +240,7 @@ class MineController extends Controller
     )]
     public function assign(AssignMineRequest $request, int $mineId): MineDetailResource
     {
-        $mine = $this->service->assign(
+        $mine = $this->service->assignCertifiers(
             $this->assignFactory->fromRequest($request),
             $mineId
         );

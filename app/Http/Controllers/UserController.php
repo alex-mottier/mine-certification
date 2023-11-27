@@ -217,7 +217,8 @@ class UserController extends Controller
     public function validateUser(ValidateUserRequest $request, int $userId): UserResource
     {
         $user = $this->service->validateUser(
-            $this->validateFactory->fromRequest($request, $userId)
+            $this->validateFactory->fromRequest($request),
+            $userId
         );
 
         return new UserResource($user);

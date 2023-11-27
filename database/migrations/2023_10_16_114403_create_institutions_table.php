@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('status')->default('for_validation');
             $table->string('type');
 
+            $table->foreignIdFor(User::class, 'created_by')->nullable();
+            
             $table->foreignIdFor(User::class, 'validated_by')->nullable();
             $table->timestamp('validated_at')->nullable();
 

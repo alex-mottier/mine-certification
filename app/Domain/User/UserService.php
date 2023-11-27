@@ -91,7 +91,7 @@ readonly class UserService
         return $users;
     }
 
-    public function validateUser(ValidateUser $validateUser): UserDTO
+    public function validateUser(ValidateUser $validateUser, int $userId): UserDTO
     {
         if($validateUser->getStatus() === Status::CREATED){
             throw new BadStatusException(
@@ -102,7 +102,7 @@ readonly class UserService
         /**
          * @var User|null $user
          */
-        $user = User::query()->find($validateUser->getUserId());
+        $user = User::query()->find($userId);
         if(!$user){
             throw new UserNotFoundException();
         }

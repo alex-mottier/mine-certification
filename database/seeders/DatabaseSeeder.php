@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Report\ReportType;
+use App\Domain\Status\Status;
 use App\Domain\User\UserType;
 use App\Models\Chapter;
 use App\Models\Criteria;
@@ -58,16 +60,23 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        $reports = Report::factory(5)->create();
+        $reports = Report::factory(5)->create([
+            'type' => ReportType::EVALUATION,
+            'status' => Status::VALIDATED
+        ]);
 
         foreach ($reports as $report){
             $count = $this->faker(Factory::DEFAULT_LOCALE)->numberBetween(1,20);
+            $score = 0;
             for ($i = 0; $i < $count; ++$i){
-                CriteriaReport::factory()->create([
+                $criteriaReport = CriteriaReport::factory()->create([
                     'criteria_id' => Criteria::query()->inRandomOrder()->first()->id,
                     'report_id' => $report->id
                 ]);
+                $score += $criteriaReport->score;
             }
+            $report->score = $score / $report->criteriaReports()->count();
+            $report->save();
         }
 
         $mines = Mine::query()->get();
@@ -94,7 +103,7 @@ class DatabaseSeeder extends Seeder
 
         $institutionUsers = User::query()->where('type', UserType::INSTITUTION->value)->get();
         $institutions = Institution::factory(5)->create();
-        foreach ($institutions as $institution){
+        foreach ($institutions->where('status', Status::VALIDATED) as $institution){
             $certifiers = $institutionUsers->random((new Randomizer)->getInt(1,$institutionUsers->count()));;
             $mines = Mine::query()
                 ->validated()

@@ -26,4 +26,12 @@ class UpgradeReportFactory
             user: $this->user
         );
     }
+
+    public function fromArray(array $data): UpgradeReport
+    {
+        return new UpgradeReport(
+            status: Status::tryFrom($data['status']),
+            user: $this->user
+        );
+    }
 }

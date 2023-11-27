@@ -2,8 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Domain\Mine\Factory\ValidateMineFactory;
+use App\Domain\Mine\MineService;
+use App\Domain\Mine\MineType;
 use App\Domain\Status\Status;
 use App\Models\Mine;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\Action;
@@ -15,6 +19,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -24,10 +29,35 @@ class Home extends Component implements HasForms, HasTable
     use InteractsWithTable;
     use InteractsWithForms;
 
+    protected Builder $mines;
+    protected MineService $mineService;
+    protected ValidateMineFactory $validateMineFactory;
+
+    public function boot(
+        MineService $mineService,
+        ValidateMineFactory $validateMineFactory,
+    ): void
+    {
+        if(Auth::user()?->isAdmin()){
+            $this->mines = Mine::query();
+        }
+        else if(Auth::user()){
+            $this->mines = Mine::query()
+                ->where('created_by', Auth::user()->id)
+                ->orWhere('status', Status::VALIDATED);
+        }
+        else{
+            $this->mines = Mine::query()->validated();
+        }
+
+        $this->mineService = $mineService;
+        $this->validateMineFactory = $validateMineFactory;
+    }
+
     public function table(Table $table): Table
     {
         return $table
-            ->query(Mine::query())
+            ->query($this->mines)
             ->columns([
                 ImageColumn::make('image_path')
                     ->label('Image')
@@ -50,11 +80,18 @@ class Home extends Component implements HasForms, HasTable
                         Status::REFUSED => 'danger'
                     })
                     ->searchable()
+                    ->visible(fn(): bool => (bool) Auth::user()),
+                TextColumn::make('type')
+                    ->badge()
+                    ->searchable()
             ])
             ->filters([
                 SelectFilter::make('status')
                     ->options(Status::class)
-                    ->attribute('status')
+                    ->attribute('status'),
+                SelectFilter::make('type')
+                    ->options(MineType::class)
+                    ->attribute('type')
                     //->default(Status::VALIDATED->value)
                     //->hidden(fn() => !auth()->user()?->isAdmin())
             ])
@@ -67,17 +104,45 @@ class Home extends Component implements HasForms, HasTable
                 Action::make('view')
                     ->icon('heroicon-o-viewfinder-circle')
                     ->url(fn (Mine $record): string => route('mine.view', ['mine' => $record]))
-                    ->visible(fn (Mine $record): bool => $record->isValidated()),
-
+                    ->visible(fn (Mine $record): bool =>
+                        $record->isValidated() ||
+                        Auth::user()?->isAdmin() ||
+                        Auth::user()?->hasMine($record->id) ||
+                        Auth::user()?->id === $record->created_by
+                    ),
                 Action::make('report')
                     ->icon('heroicon-o-flag')
+                    ->color('warning')
                     ->url(fn (Mine $record): string => route('mine.report', ['mine' => $record]))
                     ->visible(fn (Mine $record): bool => $record->isValidated()),
                 Action::make('validate')
                     ->icon('heroicon-o-flag')
-                    ->url(fn(Mine $record): string => route('mine.validate', ['mine' => $record]))
+                    ->color('warning')
+                    ->form([
+                        Radio::make('status')
+                            ->options([
+                                'validated' => 'Validated',
+                                'refused' => 'Refused'
+                            ])
+                            ->inline()
+                            ->required()
+                    ])
+                    ->action(function(array $data, Mine $record): void {
+                        $this->mineService->validateMine(
+                            $this->validateMineFactory->withStatus(
+                                Status::from($data['status'])
+                            ),
+                            $record->id
+                        );
+                    })
                     ->visible(fn (Mine $record): bool => $record->status === Status::FOR_VALIDATION && Auth::user()?->isAdmin()),
-            ]);
+                Action::make('delete')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->action(fn(Mine $record) => $record->delete())
+                    ->requiresConfirmation()
+                    ->visible(fn (Mine $record): bool => (bool) Auth::user()?->isAdmin()),
+            ])->defaultPaginationPageOption(5);
     }
 
     #[Layout('layouts.app')]

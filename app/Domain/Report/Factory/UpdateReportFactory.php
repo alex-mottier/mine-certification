@@ -28,4 +28,19 @@ class UpdateReportFactory
             criterias: $criterias,
         );
     }
+
+    public function fromArray(array $form): UpdateReport
+    {
+        $criterias = [];
+
+        foreach ($form['report'] as $report){
+            $criterias[] = $this->criteriaReportFactory->fromFront($report);
+        }
+
+        return new UpdateReport(
+            name: $form['name'],
+            status: Status::tryFrom($form['validation'])??Status::CREATED,
+            criterias: $criterias,
+        );
+    }
 }

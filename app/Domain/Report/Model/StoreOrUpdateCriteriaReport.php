@@ -27,6 +27,11 @@ readonly class StoreOrUpdateCriteriaReport implements JsonSerializable
         return $this->criteriaId;
     }
 
+    public function getScore(): ?float
+    {
+        return $this->score;
+    }
+    
     public function getAttachments(): array
     {
         return $this->attachments;

@@ -19,6 +19,12 @@ readonly class UserDTO implements Arrayable
     {
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+    
+
     /**
      * @return array<string, string>
      */

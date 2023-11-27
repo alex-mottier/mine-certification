@@ -14,6 +14,8 @@ readonly class UpdateUser implements Arrayable
         protected ?string $fullname,
         protected ?string $email,
         protected ?string $password,
+        protected ?float $longitude,
+        protected ?float $latitude,
         protected ?UserType $type,
         protected ?Status $status
     )
@@ -33,6 +35,8 @@ readonly class UpdateUser implements Arrayable
             'fullname' => $this->fullname,
             'email' => $this->email,
             'password' => $this->password,
+            'longitude' => $this->longitude,
+            'latitude' => $this->latitude,
             'type' => $this->type,
             'status' => $this->status,
         ]);

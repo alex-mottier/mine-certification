@@ -17,8 +17,24 @@ class StoreUserFactory
             fullname: $request->validated('fullname'),
             email: $request->validated('email'),
             password: Hash::make($request->validated('password')),
+            longitude: $request->validated('longitude'),
+            latitude: $request->validated('latitude'),
             type: UserType::tryFrom($request->validated('type')),
-            status: Status::CREATED,
+            status: Status::FOR_VALIDATION,
+        );
+    }
+
+    public function fromArray(array $form): StoreUser
+    {
+        return new StoreUser(
+            username: $form['username'],
+            fullname: $form['fullname'],
+            email: $form['email'],
+            password: Hash::make($form['password']),
+            longitude: $form['longitude'],
+            latitude: $form['latitude'],
+            type: UserType::tryFrom($form['type']),
+            status: Status::FOR_VALIDATION,
         );
     }
 }

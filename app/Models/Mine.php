@@ -28,6 +28,7 @@ class Mine extends Model
         'longitude',
         'latitude',
         'status',
+        'type',
     ];
 
     protected $casts = [
@@ -66,6 +67,6 @@ class Mine extends Model
 
     public function evaluation(): HasOne
     {
-        return $this->reports()->one()->ofMany('type', 'MAX', ReportType::EVALUATION->value);
+        return $this->hasOne(Report::class)->where('type', ReportType::EVALUATION->value);
     }
 }

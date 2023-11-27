@@ -15,4 +15,11 @@ class ValidateMineFactory
             status: Status::from($request->validated('status'))
         );
     }
+
+    public function withStatus(Status $status): ValidateMine
+    {
+        return new ValidateMine(
+            status: $status
+        );
+    }
 }
