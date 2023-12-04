@@ -31,7 +31,9 @@
                     <div class="flex justify-end w-full">
                         @auth
                             <div class="flex justify-center items-center mr-10 text-gray-400">
-                                {{ \Illuminate\Support\Facades\Auth::user()->username }}
+                                <x-nav-link href="{{ route('user.view', \Illuminate\Support\Facades\Auth::user()->id) }}" wire:navigate :active="request()->routeIs('users')">
+                                    {{ \Illuminate\Support\Facades\Auth::user()->username }}
+                                </x-nav-link>
                             </div>
                             <form method="POST" action="{{ route('logout') }}" class="flex justify-start" x-data>
                                 @csrf
