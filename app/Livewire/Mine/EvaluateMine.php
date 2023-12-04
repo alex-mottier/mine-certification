@@ -139,10 +139,10 @@ class EvaluateMine extends Component implements HasForms
         $evaluation = $mine->evaluation()->first();
         if($evaluation){
             $status = Status::from($form['validation']);
-            if($evaluation->status === Status::VALIDATED){
+            if($mine->status === Status::VALIDATED){
                 $status = Status::VALIDATED;
             }
-            
+
             $this->reportService->update(
                 $this->updateReportFactory->fromArray($form, $status),
                 $evaluation->id

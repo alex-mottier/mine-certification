@@ -37,14 +37,6 @@ class MineReports extends Component implements HasForms, HasTable
             return $this->mine->reports()->getQuery();
         }
 
-        if(Auth::user()){
-            return $this->mine
-                ->reports()
-                ->where('reports.created_by', Auth::user()->id)
-                ->orWhere('reports.status', Status::VALIDATED)
-                ->getQuery();
-        }
-
         return $this->mine
             ->reports()
             ->where('reports.status', Status::VALIDATED)
