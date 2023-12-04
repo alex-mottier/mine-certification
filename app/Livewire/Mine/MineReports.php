@@ -76,7 +76,6 @@ class MineReports extends Component implements HasForms, HasTable
             ])
             ->columns([
                 TextColumn::make('name')->searchable(),
-                TextColumn::make('score')->formatStateUsing(fn(string $state) => ($state / 10) * 100 . "%"),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (Status $state): string => match ($state) {
