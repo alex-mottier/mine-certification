@@ -11,7 +11,6 @@ use App\Models\CriteriaReport;
 use App\Models\Institution;
 use App\Models\Mine;
 use App\Models\MineUser;
-use App\Models\Reaction;
 use App\Models\Report;
 use App\Models\User;
 use Faker\Factory;
@@ -28,6 +27,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
+        /**
+         * Creation of the four possible types
+         */
         $admin = User::factory()->create([
             'username' => 'amottier',
             'email' => 'alex_mottier@hotmail.com',
@@ -54,12 +57,28 @@ class DatabaseSeeder extends Seeder
             'validated_by' => $admin->id
         ]);
 
+        User::factory()->create([
+            'username' => 'test_owner',
+            'email' => 'test_owner@hotmail.com',
+            'type' => 'owner',
+            'status' => 'validated',
+            'validated_at' => now(),
+            'validated_by' => $admin->id
+        ]);
+
+        /**
+         * Creation of the base chapter/criteria
+         */
         $chapters = Chapter::factory(5)->create();
         foreach ($chapters as $chapter){
             Criteria::factory(10)->create([
                 'chapter_id' => $chapter->id
             ]);
         }
+
+        /**
+         * Creation of the evaluation
+         */
 
         $reports = Report::factory(5)->create([
             'type' => ReportType::EVALUATION,
@@ -77,6 +96,8 @@ class DatabaseSeeder extends Seeder
                 $score += $criteriaReport->score;
             }
             $report->score = $score / $report->criteriaReports()->count();
+            $report->mine->score = $report->score;
+            $report->mine->save();
             $report->save();
         }
 
@@ -88,24 +109,22 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        $criteriaReports = CriteriaReport::query()
-            ->inRandomOrder()
-            ->limit(10)
-            ->get();
-
-        foreach ($criteriaReports as $criteriaReport){
-            Reaction::factory()->create([
-                'user_id' => $certifier->id,
-                'criteria_report_id' => $criteriaReport->id
-            ]);
-        }
-
         Mine::factory(10)->create();
 
-        $institutionUsers = User::query()->where('type', UserType::INSTITUTION->value)->get();
+        $institutionUsers = User::factory(10)->create([
+            'type' => UserType::INSTITUTION
+        ]);
         $institutions = Institution::factory(5)->create();
-        foreach ($institutions->where('status', Status::VALIDATED) as $institution){
-            $users = $institutionUsers->random((new Randomizer)->getInt(1,$institutionUsers->count()));;
+        foreach ($institutions->whereIn('status', [Status::VALIDATED, Status::FOR_VALIDATION]) as $institution){
+            $users = $institutionUsers
+                ->where('status', Status::VALIDATED)
+                ->random(
+                    (new Randomizer)
+                        ->getInt(1,$institutionUsers
+                            ->where('status', Status::VALIDATED)
+                            ->count()
+                        )
+                );
             /**
              * @var Institution $institution
              */

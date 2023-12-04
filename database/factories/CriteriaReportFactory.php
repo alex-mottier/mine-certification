@@ -23,7 +23,7 @@ class CriteriaReportFactory extends Factory
             'criteria_id' => Criteria::factory(),
             'report_id' => Report::factory(),
             'comment' => $this->faker->text,
-            'score' => $this->faker->numberBetween(0, 10)
+            'score' => $this->faker->numberBetween(1, 10)
         ];
     }
 }
