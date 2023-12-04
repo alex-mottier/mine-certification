@@ -93,7 +93,7 @@ class EditMine extends Component implements HasForms
                                         ->where('type', UserType::OWNER->value)
                                         ->pluck('username', 'id')
                                 )
-                        ]),
+                        ])->visible(fn(): bool => (bool) Auth::user()?->isAdmin()),
                     Wizard\Step::make('Certifiers')
                         ->schema([
                             Select::make('certifiers')
