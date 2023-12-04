@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Mine;
 
-use App\Domain\Status\Status;
 use App\Models\Mine;
 use App\Models\Report;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -13,6 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -21,7 +21,7 @@ class MineEvaluation extends Component implements HasForms, HasTable
     use InteractsWithTable;
     use InteractsWithForms;
     private Mine $mine;
-    
+
     public function mount(Mine $mine = null): void
     {
         $this->mine = $mine;
@@ -48,7 +48,7 @@ class MineEvaluation extends Component implements HasForms, HasTable
                     ->icon('heroicon-o-play-pause')
                     ->color('warning')
                     ->url(route('mine.evaluate', ['mine' => $this->mine]))
-                    ->visible(fn(Report $report): bool => $this->mine->status !== Status::VALIDATED),
+                    ->visible(fn(): bool => Auth::user()?->hasMine($this->mine->id))
             ], position: HeaderActionsPosition::Bottom)->paginated(false);
     }
 

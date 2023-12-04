@@ -56,18 +56,18 @@
                 @endif
         </nav>
         <div class="mb-10 rounded-b-xl ring-1 ring-gray-950/5 bg-white p-5 shadow-sm">
-            @if($mine->evaluation()->first() || $mine->isValidated())
+            @if(($mine->evaluation()->first() || $mine->isValidated()))
                 <div x-show="tab === 'evaluation'" >
                     <livewire:mine.mine-evaluation :mine="$mine" />
                 </div>
-            @else
+            @elseif(\Illuminate\Support\Facades\Auth::user()?->hasMine($mine->id))
                 <div x-show="tab === 'evaluation'" class="flex justify-center">
                     <livewire:mine.mine-evaluation-action :mine="$mine" />
                 </div>
             @endif
             <div x-show="tab === 'reports'"><livewire:mine.mine-reports :mine="$mine"/></div>
             <div x-show="tab === 'institutions'"><livewire:mine.mine-owners :mine="$mine"/></div>
-            @if(\Illuminate\Support\Facades\Auth::user()?->isAdmin())
+            @if(\Illuminate\Support\Facades\Auth::user()?->hasMine($mine->id) || \Illuminate\Support\Facades\Auth::user()?->isAdmin())
                 <div x-show="tab === 'certifiers'">
                     <livewire:mine.mine-certifiers :mine="$mine" />
                 </div>

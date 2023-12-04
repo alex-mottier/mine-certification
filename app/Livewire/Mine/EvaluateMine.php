@@ -144,12 +144,16 @@ class EvaluateMine extends Component implements HasForms
             );
         }
         else {
+            $status = Status::from($form['validation']);
+            if($evaluation->status === Status::VALIDATED){
+                $status = Status::VALIDATED;
+            }
             $this->reportService->store(
                 $this->storeReportFactory->fromFront(
                     $form,
                     $form['mine_id'],
                     ReportType::EVALUATION,
-                    Status::from($form['validation']))
+                    $status)
             );
         }
 
