@@ -18,7 +18,7 @@ class UpdateMineFactory
             taxNumber: $array['tax_number'],
             longitude: $array['longitude'],
             latitude: $array['latitude'],
-            status: Status::CREATED,
+            status: Status::from($array['status']),
             type: MineType::from($array['type']),
             imagePath: $array['image_path'],
         );

@@ -3,11 +3,10 @@
 namespace App\Livewire\Mine;
 
 use App\Domain\Mine\Factory\AssignCertifiersMineFactory;
-use App\Domain\Mine\Factory\AssignInstitutionsMineFactory;
+use App\Domain\Mine\Factory\AssignUsersMineFactory;
 use App\Domain\Mine\Factory\UpdateMineFactory;
 use App\Domain\Mine\MineService;
-use App\Domain\Status\Status;
-use App\Models\Institution;
+use App\Domain\User\UserType;
 use App\Models\Mine;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
@@ -35,25 +34,25 @@ class EditMine extends Component implements HasForms
     protected UpdateMineFactory $updateMineFactory;
 
     protected AssignCertifiersMineFactory $assignCertifiersMineFactory;
-    protected AssignInstitutionsMineFactory $assignInstitutionsMineFactory;
+    protected AssignUsersMineFactory $assignUsersMineFactory;
 
     public function boot(
-        MineService                     $mineService,
-        UpdateMineFactory               $updateMineFactory,
-        AssignCertifiersMineFactory     $assignCertifiersMineFactory,
-        AssignInstitutionsMineFactory   $assignInstitutionsMineFactory,
+        MineService                 $mineService,
+        UpdateMineFactory           $updateMineFactory,
+        AssignCertifiersMineFactory $assignCertifiersMineFactory,
+        AssignUsersMineFactory      $assignInstitutionsMineFactory,
     ): void
     {
         $this->mineService = $mineService;
         $this->updateMineFactory = $updateMineFactory;
         $this->assignCertifiersMineFactory = $assignCertifiersMineFactory;
-        $this->assignInstitutionsMineFactory = $assignInstitutionsMineFactory;
+        $this->assignUsersMineFactory = $assignInstitutionsMineFactory;
     }
 
     public function mount(Mine $mine): void
     {
         $certifiers = ['certifiers' => $mine->certifiers()->pluck('users.id')->toArray()];
-        $owners = ['owners' => $mine->institutions()->pluck('institutions.id')->toArray()];
+        $owners = ['owners' => $mine->owners()->pluck('users.id')->toArray()];
         $this->form->fill(array_merge($mine->toArray(), $certifiers, $owners));
     }
 
@@ -65,6 +64,7 @@ class EditMine extends Component implements HasForms
                     Wizard\Step::make('Information')
                         ->schema([
                             TextInput::make('id')->hidden(),
+                            TextInput::make('status')->hidden(),
                             TextInput::make('name')->required(),
                             TextInput::make('email')->email()->required(),
                             TextInput::make('phone_number')->tel()->required(),
@@ -89,9 +89,9 @@ class EditMine extends Component implements HasForms
                             Select::make('owners')
                                 ->multiple()
                                 ->options(
-                                    Institution::query()
-                                        ->where('status', Status::VALIDATED->value)
-                                        ->pluck('name', 'id')
+                                    User::query()
+                                        ->where('type', UserType::OWNER->value)
+                                        ->pluck('username', 'id')
                                 )
                         ]),
                     Wizard\Step::make('Certifiers')
@@ -117,18 +117,20 @@ class EditMine extends Component implements HasForms
             $this->updateMineFactory->fromArray($form)
         );
 
+        $users = [];
+
         if(array_key_exists('certifiers', $form) && $form['certifiers']){
-            $this->mineService->assignCertifiers(
-                $this->assignCertifiersMineFactory->fromArray($form['certifiers']),
-                $mine->getId()
-            );
+           $users = array_merge($users, $form['certifiers']);
         }
 
-        if($form['owners'])
-            $this->mineService->assignInstitutions(
-                $this->assignInstitutionsMineFactory->fromArray($form['owners']),
-                $mine->getId(),
-            );
+        if(array_key_exists('owners', $form) && $form['owners']){
+            $users = array_merge($users, $form['owners']);
+        }
+
+        $this->mineService->assignUsers(
+            $this->assignUsersMineFactory->fromArray($users),
+            $mine->getId(),
+        );
 
         $this->redirect(route('mine.view', $mine->getId()));
     }

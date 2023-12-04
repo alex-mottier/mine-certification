@@ -37,7 +37,7 @@ class MineCertifiers extends Component implements HasForms, HasTable
             ->actions([
                 Action::make('view')
                     ->icon('heroicon-o-viewfinder-circle')
-                    ->url(fn(User $record) => route('user.view', ['user' => $record]))
+                    ->url(fn(User $record) => route('user.view', ['user' => $record->user_id]))
             ])
             ->paginated(false);
     }

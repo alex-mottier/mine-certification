@@ -5,7 +5,7 @@ namespace App\Domain\Mine;
 use App\Domain\Mine\Factory\MineDetailFactory;
 use App\Domain\Mine\Factory\MineDTOFactory;
 use App\Domain\Mine\Model\AssignCertifiersMine;
-use App\Domain\Mine\Model\AssignInstitutionsMine;
+use App\Domain\Mine\Model\AssignUsersMine;
 use App\Domain\Mine\Model\MineDetail;
 use App\Domain\Mine\Model\MineDTO;
 use App\Domain\Mine\Model\SearchMine;
@@ -256,21 +256,6 @@ class MineService
         }
     }
 
-    public function assignInstitutions(AssignInstitutionsMine $request, int $mineId): MineDetail
-    {
-        /**
-         * @var Mine|null $mine
-         */
-        $mine = Mine::query()->find($mineId);
-        if(!$mine){
-            throw new MineNotFoundException();
-        }
-
-        $mine->institutions()->sync($request->getInstitutions());
-
-        return $this->mineDetailFactory->fromModel($mine);
-    }
-
     public function update(UpdateMine $updateMine): MineDTO
     {
         /**
@@ -281,6 +266,21 @@ class MineService
         $mine->update($updateMine->jsonSerialize());
 
         return $this->mineFactory->fromModel($mine);
+    }
+
+    public function assignUsers(AssignUsersMine $data, int $mineId): MineDetail
+    {
+        /**
+         * @var Mine|null $mine
+         */
+        $mine = Mine::query()->find($mineId);
+        if(!$mine){
+            throw new MineNotFoundException();
+        }
+
+        $mine->users()->sync($data->getUsers());
+
+        return $this->mineDetailFactory->fromModel($mine);
     }
 
 }

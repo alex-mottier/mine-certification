@@ -23,7 +23,7 @@ use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-class Report extends Component implements HasForms, HasTable
+class ReportHome extends Component implements HasForms, HasTable
 {
     use InteractsWithForms;
     use InteractsWithTable;
@@ -58,11 +58,6 @@ class Report extends Component implements HasForms, HasTable
                         route('mine.view', ['mine' => $record->mine()->first()])
                     )
                     ->searchable(),
-                TextColumn::make('score'),
-                TextColumn::make('mine.certifiers.username')
-                    ->searchable()
-                    ->listWithLineBreaks()
-                    ->bulleted(),
                 TextColumn::make('status')
                     ->icon(fn (Status $state): string => match ($state) {
                         Status::CREATED => 'heroicon-o-plus-circle',
@@ -90,8 +85,6 @@ class Report extends Component implements HasForms, HasTable
                 SelectFilter::make('status')
                     ->options(Status::class)
                     ->attribute('status'),
-                //->default(Status::VALIDATED->value)
-                //->hidden(fn() => !auth()->user()?->isAdmin())
                 SelectFilter::make('type')
                     ->options(ReportType::class)
                     ->attribute('type')

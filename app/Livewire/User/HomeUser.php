@@ -69,6 +69,7 @@ class HomeUser extends Component implements HasForms, HasTable
                     UserType::ADMINISTRATOR => 'info',
                     UserType::CERTIFIER => 'second',
                     UserType::INSTITUTION => 'warning',
+                    UserType::OWNER => 'third',
                 })
                 ->searchable()
 

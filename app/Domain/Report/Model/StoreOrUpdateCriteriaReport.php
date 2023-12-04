@@ -8,13 +8,13 @@ use JsonSerializable;
 readonly class StoreOrUpdateCriteriaReport implements JsonSerializable
 {
     /**
-     * @param int $criteriaId
+     * @param int|null $criteriaId
      * @param string|null $comment
      * @param float|null $score
      * @param UploadedFile[] $attachments
      */
     public function __construct(
-        protected int $criteriaId,
+        protected ?int $criteriaId,
         protected ?string $comment,
         protected ?float $score,
         protected array $attachments,
@@ -22,7 +22,7 @@ readonly class StoreOrUpdateCriteriaReport implements JsonSerializable
     {
     }
 
-    public function getCriteriaId(): int
+    public function getCriteriaId(): ?int
     {
         return $this->criteriaId;
     }
@@ -31,7 +31,7 @@ readonly class StoreOrUpdateCriteriaReport implements JsonSerializable
     {
         return $this->score;
     }
-    
+
     public function getAttachments(): array
     {
         return $this->attachments;

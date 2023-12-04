@@ -10,7 +10,7 @@ use App\Livewire\Mine\EditMine;
 use App\Livewire\Mine\EvaluateMine;
 use App\Livewire\Mine\ViewMine;
 use App\Livewire\Report\CreateReport;
-use App\Livewire\Report\Report;
+use App\Livewire\Report\ReportHome;
 use App\Livewire\Report\ViewReport;
 use App\Livewire\User\CreateUser;
 use App\Livewire\User\EditUser;
@@ -52,6 +52,6 @@ Route::prefix('institutions')->group(function(){
 });
 
 Route::prefix('reports')->group(function(){
-    Route::get('', Report::class)->name('report.home');
-    Route::get('{report}', ViewReport::class)->name('report.view');
+    Route::get('', ReportHome::class)->name('report.home');
+    Route::get('{report}/view', ViewReport::class)->name('report.view');
 });

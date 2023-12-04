@@ -6,9 +6,11 @@ use App\Domain\Mine\MineType;
 use App\Domain\Report\ReportType;
 use App\Domain\Status\Status;
 use App\Domain\Trait\HasCoordinates;
+use App\Domain\User\UserType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -35,19 +37,27 @@ class Mine extends Model
         'status' => Status::class,
         'type' => MineType::class
     ];
-    public function institutions(): BelongsToMany
+
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsToMany(Institution::class)->withTimestamps();
+        return $this->belongsTo(User::class, null, 'created_by');
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class
+        )->withTimestamps();
     }
 
     public function certifiers(): BelongsToMany
     {
-        return $this->belongsToMany(
-            User::class,
-            null,
-            null,
-            'certifier_id'
-        )->withTimestamps();
+        return $this->users()->where('users.type',UserType::CERTIFIER->value);
+    }
+
+    public function owners(): BelongsToMany
+    {
+        return $this->users()->where('users.type',UserType::OWNER->value);
     }
 
     public function reports(): HasMany

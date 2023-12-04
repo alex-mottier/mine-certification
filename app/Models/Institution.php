@@ -26,11 +26,6 @@ class Institution extends Model
         'type' => InstitutionType::class
     ];
 
-    public function mines(): BelongsToMany
-    {
-        return $this->belongsToMany(Mine::class)->withTimestamps();
-    }
-
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withTimestamps();

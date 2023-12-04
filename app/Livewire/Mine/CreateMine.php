@@ -3,16 +3,16 @@
 namespace App\Livewire\Mine;
 
 use App\Domain\Mine\Factory\AssignCertifiersMineFactory;
-use App\Domain\Mine\Factory\AssignInstitutionsMineFactory;
+use App\Domain\Mine\Factory\AssignUsersMineFactory;
 use App\Domain\Mine\Factory\StoreMineFactory;
 use App\Domain\Mine\MineService;
 use App\Domain\Report\Factory\StoreReportFactory;
 use App\Domain\Report\ReportService;
 use App\Domain\Report\ReportType;
 use App\Domain\Status\Status;
+use App\Domain\User\UserType;
 use App\Models\Chapter;
 use App\Models\Criteria;
-use App\Models\Institution;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
@@ -42,15 +42,15 @@ class CreateMine extends Component implements HasForms
     protected StoreMineFactory $storeMineFactory;
     protected StoreReportFactory $storeReportFactory;
     protected AssignCertifiersMineFactory $assignCertifiersMineFactory;
-    protected AssignInstitutionsMineFactory $assignInstitutionsMineFactory;
+    protected AssignUsersMineFactory $assignUsersMineFactory;
 
     public function boot(
         MineService                 $mineService,
-        ReportService                 $reportService,
+        ReportService               $reportService,
         StoreMineFactory            $storeMineFactory,
-        StoreReportFactory $storeReportFactory,
+        StoreReportFactory          $storeReportFactory,
         AssignCertifiersMineFactory $assignCertifiersMineFactory,
-        AssignInstitutionsMineFactory $assignInstitutionsMineFactory,
+        AssignUsersMineFactory      $assignInstitutionsMineFactory,
     ): void
     {
         $this->mineService = $mineService;
@@ -58,7 +58,7 @@ class CreateMine extends Component implements HasForms
         $this->storeMineFactory = $storeMineFactory;
         $this->storeReportFactory = $storeReportFactory;
         $this->assignCertifiersMineFactory = $assignCertifiersMineFactory;
-        $this->assignInstitutionsMineFactory = $assignInstitutionsMineFactory;
+        $this->assignUsersMineFactory = $assignInstitutionsMineFactory;
     }
 
     public function mount(): void
@@ -147,9 +147,9 @@ class CreateMine extends Component implements HasForms
                             Select::make('owners')
                                 ->multiple()
                                 ->options(
-                                    Institution::query()
-                                        ->where('status', Status::VALIDATED->value)
-                                        ->pluck('name', 'id')
+                                    User::query()
+                                        ->where('type', UserType::OWNER->value)
+                                        ->pluck('username', 'id')
                                 )
                         ]),
                     Wizard\Step::make('Certifiers')
@@ -175,12 +175,6 @@ class CreateMine extends Component implements HasForms
             $this->storeMineFactory->fromArray($form)
         );
 
-        if(array_key_exists('certifiers', $form) && $form['certifiers']){
-            $this->mineService->assignCertifiers(
-                $this->assignCertifiersMineFactory->fromArray($form['certifiers']),
-                $mine->getId()
-            );
-        }
         if(array_key_exists('report', $form) && $form['report']) {
             $this->reportService->store(
                 $this->storeReportFactory->fromFront(
@@ -192,12 +186,20 @@ class CreateMine extends Component implements HasForms
             );
         }
 
-        if($form['owners']){
-            $this->mineService->assignInstitutions(
-                $this->assignInstitutionsMineFactory->fromArray($form['owners']),
-                $mine->getId(),
-            );
+        $users = [];
+
+        if(array_key_exists('certifiers', $form) && $form['certifiers']){
+            $users = array_merge($users, $form['certifiers']);
         }
+
+        if(array_key_exists('owners', $form) && $form['owners']){
+            $users = array_merge($users, $form['owners']);
+        }
+
+        $this->mineService->assignUsers(
+            $this->assignUsersMineFactory->fromArray($users),
+            $mine->getId(),
+        );
 
         $this->redirect(route('mine.view', $mine->getId()));
     }

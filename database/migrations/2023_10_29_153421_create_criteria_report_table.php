@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::create('criteria_report', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Criteria::class);
+            $table->foreignIdFor(Criteria::class)->nullable();
             $table->foreignIdFor(Report::class);
             $table->string('comment');
             $table->double('score')->nullable();
+            $table->string('status')->default('for_validation');
             $table->timestamps();
         });
     }

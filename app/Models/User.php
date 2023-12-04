@@ -88,7 +88,7 @@ class User extends Authenticatable
 
     public function mines(): BelongsToMany
     {
-        return $this->belongsToMany(Mine::class, null, 'certifier_id')->withTimestamps();
+        return $this->belongsToMany(Mine::class)->withTimestamps();
     }
 
     public function institutions(): BelongsToMany

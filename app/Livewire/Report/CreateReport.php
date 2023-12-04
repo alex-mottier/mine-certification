@@ -6,19 +6,15 @@ use App\Domain\Report\Factory\StoreReportFactory;
 use App\Domain\Report\ReportService;
 use App\Domain\Report\ReportType;
 use App\Domain\Status\Status;
-use App\Models\Chapter;
-use App\Models\Criteria;
 use App\Models\Mine;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -56,25 +52,6 @@ class CreateReport extends Component implements HasForms
                 TextInput::make('name')->required(),
                 Repeater::make('report')
                     ->schema([
-                        Select::make('chapter')
-                            ->options(
-                                Chapter::query()
-                                    ->pluck('name', 'id')
-                            )
-                            ->live()
-                            ->required(),
-                        Select::make('criteria')
-                            ->options(fn (Get $get): array => match ($get('chapter')) {
-                                default => Criteria::query()->where('chapter_id', $get('chapter'))
-                                    ->pluck('name', 'id')->toArray(),
-                            })
-                            ->required(),
-                        TextInput::make('score')
-                            ->numeric()
-                            ->step(0.1)
-                            ->minValue(1)
-                            ->maxValue(10)
-                            ->required(),
                         RichEditor::make('comment')
                             ->toolbarButtons([
                                 'blockquote',
@@ -112,7 +89,8 @@ class CreateReport extends Component implements HasForms
                 Status::FOR_VALIDATION
             )
         );
-        $this->redirect('/mines/'. $this->mine->id);
+        
+        $this->redirect(route('mine.view', $this->mine->id));
     }
 
     #[Layout('layouts.app')]

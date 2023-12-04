@@ -15,7 +15,6 @@ class UpdateInstitution implements JsonSerializable
         protected Status $status,
         protected InstitutionType $type,
         protected array $users = [],
-        protected array $mines = []
     )
     {
     }
@@ -24,16 +23,11 @@ class UpdateInstitution implements JsonSerializable
     {
         return $this->id;
     }
-    
+
 
     public function getUsers(): array
     {
         return $this->users;
-    }
-
-    public function getMines(): array
-    {
-        return $this->mines;
     }
 
     public function jsonSerialize(): array

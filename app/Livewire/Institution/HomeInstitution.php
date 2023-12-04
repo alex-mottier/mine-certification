@@ -44,7 +44,7 @@ class HomeInstitution extends Component implements HasForms, HasTable
     private function getQuery(): Builder
     {
         if(Auth::user()?->isAdmin())
-            return Institution::query()->with(['users', 'mines']);
+            return Institution::query()->with(['users']);
         else
             return Institution::query()
                 ->where('status', Status::VALIDATED->value)

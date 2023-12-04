@@ -8,8 +8,10 @@ use App\Domain\Report\Model\SearchReport;
 use App\Domain\Report\Model\StoreReport;
 use App\Domain\Report\Model\UpdateReport;
 use App\Domain\Report\Model\UpgradeReport;
+use App\Domain\Report\Model\UpgradeReportCriteria;
 use App\Domain\Status\Status;
 use App\Exceptions\Auth\UnauthorizedException;
+use App\Exceptions\Report\CriteriaReportNotValidException;
 use App\Exceptions\Report\ReportNotFoundException;
 use App\Exceptions\Status\BadStatusException;
 use App\Models\Attachment;
@@ -109,7 +111,7 @@ readonly class ReportService
                 ]);
             }
         }
-        if($store->getCriterias()) {
+        if($store->getCriterias() && $store->getType() === ReportType::EVALUATION) {
             $report->score = $score / count($store->getCriterias());
             $report->save();
         }
@@ -187,7 +189,7 @@ readonly class ReportService
             }
         }
 
-        if($update->getCriterias()) {
+        if($update->getCriterias() && $report->type === ReportType::EVALUATION) {
             $report->score = $score / count($update->getCriterias());
             $report->save();
         }
@@ -216,17 +218,17 @@ readonly class ReportService
         };
 
         if($upgrade->getStatus() === Status::VALIDATED){
-            //$this->calculateScore();
             /**
              * @var Mine $mine
              */
             $mine = $report->mine()->first();
             Notification::send($mine->certifiers()->get(), new ReportValidated($report));
 
-//            $evaluation = $mine->evaluation()->first();
-//            $reports = $mine->reports()->where('status', Status::VALIDATED)->pluck('score');
-//            $mine->score = (array_sum($reports->toArray()) + $report->score + $evaluation->score) / ($reports->count() + 2);
-//            $mine->save();
+            if($report->type === ReportType::EVALUATION){
+                $evaluation = $mine->evaluation()->first();
+                $mine->score = $evaluation->score;
+                $mine->save();
+            }
         }
 
         $report->status = $upgrade->getStatus();
@@ -287,11 +289,6 @@ readonly class ReportService
         }
     }
 
-    private function calculateScore(): void
-    {
-        //TODO Calculate score
-    }
-
     /**
      * @param Collection<User> $certifiers
      * @param User|null $user
@@ -309,5 +306,27 @@ readonly class ReportService
             }
         }
         return false;
+    }
+
+    public function upgradeReportCriteria(UpgradeReportCriteria $data, int $id): void
+    {
+        /**
+         * @var CriteriaReport $criteriaReport
+         */
+        $criteriaReport = CriteriaReport::query()->find($id);
+        if(!$criteriaReport){
+            throw new CriteriaReportNotValidException();
+        }
+
+        if($criteriaReport->status !== Status::FOR_VALIDATION){
+            throw new UnauthorizedException();
+        }
+
+        if($data->getStatus() !== Status::VALIDATED && $data->getStatus() !== Status::REFUSED){
+            throw new UnauthorizedException();
+        }
+
+        $criteriaReport->status = $data->getStatus();
+        $criteriaReport->save();
     }
 }

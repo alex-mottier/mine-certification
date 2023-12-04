@@ -8,7 +8,6 @@ use App\Domain\Institution\InstitutionType;
 use App\Domain\Status\Status;
 use App\Domain\User\UserType;
 use App\Models\Institution;
-use App\Models\Mine;
 use App\Models\User;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -17,7 +16,6 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -50,9 +48,6 @@ class EditInstitution extends Component implements HasForms
             [
                 'users' => $institution->users()->pluck('users.id')->toArray()
             ],
-            [
-                'mines' => $institution->mines()->pluck('mines.id')->toArray()
-            ],
         ));
     }
 
@@ -83,17 +78,6 @@ class EditInstitution extends Component implements HasForms
                                     ->pluck('username', 'id')
                             )
                     ]),
-                Wizard\Step::make('Mines')
-                    ->schema([
-                        Select::make('mines')
-                            ->multiple()
-                            ->options(
-                                Mine::query()
-                                    ->pluck('name', 'id')
-                            )
-                            ->searchable()
-                    ])
-                    ->visible(fn(): bool => (bool) Auth::user()?->isAdmin()),
             ])->submitAction(new HtmlString('<button class="text-black text-sm border-black font-bold border-1 py-2 px-4 rounded" type="submit">Submit</button>'))
         ])
             ->statePath('data');

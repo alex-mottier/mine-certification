@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('mine_user', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Mine::class);
-            $table->foreignIdFor(User::class, 'certifier_id');
+            $table->foreignIdFor(User::class);
             $table->timestamps();
         });
     }

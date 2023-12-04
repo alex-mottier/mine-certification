@@ -16,12 +16,13 @@ use App\Models\Report;
 use App\Models\User;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Random\Randomizer;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithFaker;
+    use WithFaker, RefreshDatabase;
     /**
      * Seed the application's database.
      */
@@ -82,7 +83,7 @@ class DatabaseSeeder extends Seeder
         $mines = Mine::query()->get();
         foreach ($mines as $mine) {
             MineUser::query()->create([
-                'certifier_id' => $certifier->id,
+                'user_id' => $certifier->id,
                 'mine_id' => $mine->id
             ]);
         }
@@ -104,17 +105,34 @@ class DatabaseSeeder extends Seeder
         $institutionUsers = User::query()->where('type', UserType::INSTITUTION->value)->get();
         $institutions = Institution::factory(5)->create();
         foreach ($institutions->where('status', Status::VALIDATED) as $institution){
-            $certifiers = $institutionUsers->random((new Randomizer)->getInt(1,$institutionUsers->count()));;
-            $mines = Mine::query()
-                ->validated()
-                ->inRandomOrder()
-                ->take((new Randomizer)->getInt(1,Mine::query()->count()))
-                ->get();
+            $users = $institutionUsers->random((new Randomizer)->getInt(1,$institutionUsers->count()));;
             /**
              * @var Institution $institution
              */
-            $institution->users()->attach($certifiers);
-            $institution->mines()->attach($mines);
+            $institution->users()->attach($users);
+        }
+
+        foreach(Mine::query()->where('status', Status::VALIDATED)->get() as $mine){
+            $owners = User::factory((new Randomizer)->getInt(1,5))->create([
+                'type' => UserType::OWNER,
+                'validated_by' => $admin,
+                'validated_at' => now(),
+                'status' => Status::VALIDATED
+            ]);
+
+            $certifiers = User::factory((new Randomizer)->getInt(1,5))->create([
+                'type' => UserType::CERTIFIER,
+                'validated_by' => $admin,
+                'validated_at' => now(),
+                'status' => Status::VALIDATED
+            ]);
+
+            foreach ($owners->merge($certifiers) as $user) {
+                MineUser::query()->create([
+                    'user_id' => $user->id,
+                    'mine_id' => $mine->id
+                ]);
+            }
         }
     }
 }

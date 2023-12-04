@@ -8,18 +8,18 @@ readonly class CriteriaReportDTO implements JsonSerializable
 {
     /**
      * @param int $id
-     * @param int $criteriaId
+     * @param int|null $criteriaId
      * @param int $reportId
      * @param string $comment
-     * @param float $score
+     * @param float|null $score
      * @param string[] $attachments
      */
     public function __construct(
         protected int $id,
-        protected int $criteriaId,
+        protected ?int $criteriaId,
         protected int $reportId,
         protected string $comment,
-        protected float $score,
+        protected ?float $score,
         protected array $attachments,
     )
     {

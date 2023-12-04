@@ -43,10 +43,6 @@ class InstitutionService
             $institution->users()->sync($data->getUsers());
         }
 
-        if($data->getMines()){
-            $institution->mines()->sync($data->getMines());
-        }
-
         return $this->institutionDTOFactory->fromModel($institution);
     }
 
@@ -118,7 +114,6 @@ class InstitutionService
         $institution->update($data->jsonSerialize());
 
         $institution->users()->sync($data->getUsers());
-        $institution->mines()->sync($data->getMines());
 
         return $this->institutionDTOFactory->fromModel($institution);
     }

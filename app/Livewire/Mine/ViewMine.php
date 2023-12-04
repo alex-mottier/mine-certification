@@ -63,6 +63,7 @@ class ViewMine extends Component implements HasInfolists, HasForms, HasActions
                             TextEntry::make('phone_number'),
                             TextEntry::make('longitude'),
                             TextEntry::make('latitude'),
+                            TextEntry::make('score'),
                             TextEntry::make('type')->badge(),
                             TextEntry::make('status')->suffixActions([
                                 Action::make('validate')

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Status\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,11 @@ class CriteriaReport extends Model
       'report_id',
       'comment',
       'score',
+      'status'
+    ];
+
+    protected $casts = [
+        'status' => Status::class
     ];
 
     public function attachments(): MorphMany

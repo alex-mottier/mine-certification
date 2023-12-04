@@ -7,4 +7,5 @@ enum UserType: string
     case ADMINISTRATOR = 'administrator';
     case CERTIFIER = 'certifier';
     case INSTITUTION = 'institution';
+    case OWNER = 'owner';
 }

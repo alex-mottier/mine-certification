@@ -1,3 +1,8 @@
 <div class="py-10">
-    {{ $this->table }}
+    <div class="pb-5">
+        {{ $this->reportInfolist }}
+    </div>
+    <div>
+        {{ $this->table }}
+    </div>
 </div>

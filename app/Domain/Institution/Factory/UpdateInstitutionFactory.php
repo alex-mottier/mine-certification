@@ -18,7 +18,6 @@ class UpdateInstitutionFactory
             status: Status::FOR_VALIDATION,
             type: InstitutionType::from($form['type']),
             users: $form['users'],
-            mines:  $form['mines'],
         );
     }
 }

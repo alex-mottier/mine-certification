@@ -66,7 +66,7 @@
                 </div>
             @endif
             <div x-show="tab === 'reports'"><livewire:mine.mine-reports :mine="$mine"/></div>
-            <div x-show="tab === 'institutions'"><livewire:mine.mine-institutions :mine="$mine"/></div>
+            <div x-show="tab === 'institutions'"><livewire:mine.mine-owners :mine="$mine"/></div>
             @if(\Illuminate\Support\Facades\Auth::user()?->isAdmin())
                 <div x-show="tab === 'certifiers'">
                     <livewire:mine.mine-certifiers :mine="$mine" />

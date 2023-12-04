@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Mine;
 
-use App\Models\Institution;
 use App\Models\Mine;
+use App\Models\User;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\Action;
@@ -14,7 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class MineInstitutions extends Component implements HasForms, HasTable
+class MineOwners extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
@@ -29,20 +29,19 @@ class MineInstitutions extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query($this->mine->institutions()->getQuery())
+            ->query($this->mine->owners()->getQuery())
             ->columns([
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('type')->badge()->searchable()
+                TextColumn::make('username')->searchable(),
             ])->actions([
                 Action::make('view')
                     ->icon('heroicon-o-viewfinder-circle')
-                    ->url(fn(Institution $record) => route('institution.view', ['institution' => $record]))
+                    ->url(fn(User $record) => route('user.view', ['user' => $record->user_id]))
             ])
             ->paginated(false);
     }
 
     public function render(): View
     {
-        return view('livewire.mine.mine-institutions');
+        return view('livewire.mine.mine-owners');
     }
 }

@@ -19,24 +19,10 @@
             >
                 Users
             </a>
-            <a
-                :class="{ 'border-gray-700 text-gray-400': tab === 'mines' }"
-                x-on:click.prevent="tab = 'mines'"
-                href="#"
-                rel="noopener noreferrer"
-                class="flex items-center flex-shrink-0 px-5 py-2 border-b-4
-                dark:border-gray-700 dark:text-gray-400
-                hover:border-gray-700 hover:text-gray-400"
-            >
-                Mines
-            </a>
         </nav>
         <div class="mb-10 rounded-b-xl ring-1 ring-gray-950/5 bg-white p-5 shadow-sm">
             <div x-show="tab === 'users'">
                 <livewire:institution.user-institution :institution="$institution" />
-            </div>
-            <div x-show="tab === 'mines'">
-                <livewire:institution.mine-institution :institution="$institution" />
             </div>
         </div>
     </div>
