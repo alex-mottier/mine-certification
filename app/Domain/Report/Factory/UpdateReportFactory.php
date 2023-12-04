@@ -29,7 +29,7 @@ class UpdateReportFactory
         );
     }
 
-    public function fromArray(array $form): UpdateReport
+    public function fromArray(array $form, Status $status): UpdateReport
     {
         $criterias = [];
 
@@ -39,7 +39,7 @@ class UpdateReportFactory
 
         return new UpdateReport(
             name: $form['name'],
-            status: Status::tryFrom($form['validation'])??Status::CREATED,
+            status: $status,
             criterias: $criterias,
         );
     }

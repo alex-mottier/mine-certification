@@ -42,9 +42,7 @@ class Home extends Component implements HasForms, HasTable
             $this->mines = Mine::query();
         }
         else if(Auth::user()){
-            $this->mines = Mine::query()
-                ->where('created_by', Auth::user()->id)
-                ->orWhere('status', Status::VALIDATED);
+            $this->mines = Auth::user()->mines()->getQuery();
         }
         else{
             $this->mines = Mine::query()->validated();
@@ -92,8 +90,6 @@ class Home extends Component implements HasForms, HasTable
                 SelectFilter::make('type')
                     ->options(MineType::class)
                     ->attribute('type')
-                    //->default(Status::VALIDATED->value)
-                    //->hidden(fn() => !auth()->user()?->isAdmin())
             ])
             ->headerActions([
                 Action::make('create mine')
@@ -103,11 +99,11 @@ class Home extends Component implements HasForms, HasTable
             ->actions([
                 Action::make('view')
                     ->icon('heroicon-o-viewfinder-circle')
-                    ->url(fn (Mine $record): string => route('mine.view', ['mine' => $record]))
+                    ->url(fn (Mine $record): string => route('mine.view', ['mine' => $record->mine_id]))
                     ->visible(fn (Mine $record): bool =>
                         $record->isValidated() ||
                         Auth::user()?->isAdmin() ||
-                        Auth::user()?->hasMine($record->id) ||
+                        Auth::user()?->hasMine($record->mine_id) ||
                         Auth::user()?->id === $record->created_by
                     ),
                 Action::make('report')
