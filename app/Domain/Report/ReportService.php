@@ -174,7 +174,8 @@ readonly class ReportService
             foreach ($criteria->getAttachments() as $attachment){
                 $modelAttachment = Attachment::query()
                         ->where('filename',$attachment->getClientOriginalName())
-                        ->where('criteria_report_id', $criteriaReport->id)
+                        ->where('attachable_id', $criteriaReport->id)
+                        ->where('attachable_type', CriteriaReport::class)
                         ->first();
                 if(!$modelAttachment){
                     $file = $attachment->storeAs(

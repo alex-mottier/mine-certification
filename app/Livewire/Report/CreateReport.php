@@ -83,13 +83,13 @@ class CreateReport extends Component implements HasForms
     {
         $this->reportService->store(
             $this->storeReportFactory->fromFront(
-                $this->form->getState(),
+                $this->form->getRawState(),
                 $this->mine->id,
                 ReportType::REPORT,
                 Status::FOR_VALIDATION
             )
         );
-        
+
         $this->redirect(route('mine.view', $this->mine->id));
     }
 

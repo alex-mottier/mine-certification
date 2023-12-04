@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DownloadController;
 use App\Livewire\Home;
 use App\Livewire\Institution\CreateInstitution;
 use App\Livewire\Institution\EditInstitution;
@@ -54,4 +55,7 @@ Route::prefix('institutions')->group(function(){
 Route::prefix('reports')->group(function(){
     Route::get('', ReportHome::class)->name('report.home');
     Route::get('{report}/view', ViewReport::class)->name('report.view');
+    Route::get('{report}/report/{criteriaReport}/download', [DownloadController::class, 'criteriaReport'])
+        ->name('report.criteriaReport.download');
+
 });

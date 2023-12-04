@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Mine;
 
+use App\Models\CriteriaReport;
 use App\Models\Mine;
 use App\Models\Report;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -42,6 +43,20 @@ class MineEvaluation extends Component implements HasForms, HasTable
                 TextColumn::make('criteria.name')->searchable(),
                 TextColumn::make('comment')->wrap()->html(),
                 TextColumn::make('score')->numeric(),
+                TextColumn::make('attachments.filename')
+                    ->listWithLineBreaks(),
+            ])
+            ->actions([
+                Action::make('download')
+                    ->icon('heroicon-m-document-arrow-up')
+                    ->url(
+                        url: fn(CriteriaReport $record): string =>
+                                route('report.criteriaReport.download', [
+                                    'report' => $record->report,
+                                    'criteriaReport' => $record
+                                ]),
+                        shouldOpenInNewTab: true)
+                    ->visible(fn(CriteriaReport $record): bool => !$record->attachments()->get()->isEmpty())
             ])
             ->headerActions([
                 Action::make('Evaluate')

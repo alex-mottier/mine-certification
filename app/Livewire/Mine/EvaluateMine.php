@@ -122,7 +122,7 @@ class EvaluateMine extends Component implements HasForms
                                     TextInput::make('score')
                                         ->numeric()
                                         ->step(0.1)
-                                        ->minValue(1)
+                                        ->minValue(0.1)
                                         ->maxValue(10)
                                         ->required(),
                                 ])

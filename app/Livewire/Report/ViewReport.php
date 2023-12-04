@@ -19,7 +19,6 @@ use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -128,7 +127,7 @@ class ViewReport extends Component implements HasTable, HasForms, HasInfolists
     public function table(Table $table):Table
     {
         return $table
-            ->query($this->report->criteriaReports()->with('criteria.chapter')->getQuery())
+            ->query($this->report->criteriaReports()->with('criteria.chapter, attachments')->getQuery())
             ->columns([
                 TextColumn::make('criteria.chapter.name')
                     ->visible(fn(): bool => $this->report->type === ReportType::EVALUATION),
@@ -152,9 +151,19 @@ class ViewReport extends Component implements HasTable, HasForms, HasInfolists
                         Status::REFUSED => 'danger'
                     })
                     ->visible(fn(): bool => $this->report->type === ReportType::REPORT),
-                ImageColumn::make('attachments.path')
+                TextColumn::make('attachments.filename')->listWithLineBreaks()
             ])
             ->actions([
+                Action::make('download')
+                    ->icon('heroicon-m-document-arrow-up')
+                    ->url(
+                        url: fn(CriteriaReport $record): string =>
+                        route('report.criteriaReport.download', [
+                            'report' => $record->report,
+                            'criteriaReport' => $record
+                        ]),
+                        shouldOpenInNewTab: true)
+                    ->visible(fn(CriteriaReport $record): bool => !$record->attachments()->get()->isEmpty()),
                 Action::make('validate')
                     ->icon('heroicon-o-flag')
                     ->color('warning')
