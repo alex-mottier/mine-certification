@@ -99,7 +99,7 @@ class Home extends Component implements HasForms, HasTable
             ->actions([
                 Action::make('view')
                     ->icon('heroicon-o-viewfinder-circle')
-                    ->url(fn (Mine $record): string => route('mine.view', ['mine' => $record->mine_id]))
+                    ->url(fn (Mine $record): string => route('mine.view', ['mine' => $record]))
                     ->visible(fn (Mine $record): bool =>
                         $record->isValidated() ||
                         Auth::user()?->isAdmin() ||

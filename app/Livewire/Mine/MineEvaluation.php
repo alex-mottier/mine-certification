@@ -48,7 +48,7 @@ class MineEvaluation extends Component implements HasForms, HasTable
                     ->icon('heroicon-o-play-pause')
                     ->color('warning')
                     ->url(route('mine.evaluate', ['mine' => $this->mine]))
-                    ->visible(fn(): bool => Auth::user()?->hasMine($this->mine->id))
+                    ->visible(fn(): bool => (bool) Auth::user()?->hasMine($this->mine->id))
             ], position: HeaderActionsPosition::Bottom)->paginated(false);
     }
 

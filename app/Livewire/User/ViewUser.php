@@ -44,6 +44,7 @@ class ViewUser extends Component implements HasInfolists, HasForms
         $this->user = $user;
     }
 
+
     public function userInfolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -116,6 +117,8 @@ class ViewUser extends Component implements HasInfolists, HasForms
     #[Layout('layouts.app')]
     public function render(): View
     {
-        return view('livewire.user.view-user');
+        return view('livewire.user.view-user',[
+            'user' => $this->user
+        ]);
     }
 }
