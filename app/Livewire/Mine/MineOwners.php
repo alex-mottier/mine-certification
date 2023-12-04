@@ -32,6 +32,7 @@ class MineOwners extends Component implements HasForms, HasTable
             ->query($this->mine->owners()->getQuery())
             ->columns([
                 TextColumn::make('username')->searchable(),
+                TextColumn::make('fullname')->searchable(),
             ])->actions([
                 Action::make('view')
                     ->icon('heroicon-o-viewfinder-circle')
