@@ -8,23 +8,16 @@ use App\Domain\Mine\Factory\StoreMineFactory;
 use App\Domain\Mine\MineService;
 use App\Domain\Report\Factory\StoreReportFactory;
 use App\Domain\Report\ReportService;
-use App\Domain\Report\ReportType;
-use App\Domain\Status\Status;
 use App\Domain\User\UserType;
-use App\Models\Chapter;
-use App\Models\Criteria;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\View;
@@ -92,56 +85,6 @@ class CreateMine extends Component implements HasForms
                                 ->image()
                                 ->imageEditor()
                         ]),
-                    Wizard\Step::make('Evaluation')
-                        ->schema([
-                            Radio::make('validation')
-                                ->options([
-                                    'for_validation' => 'Submit this evaluation for validation',
-                                    'created' => 'Finish this evaluation later'
-                                ]),
-                            Repeater::make('report')
-                                ->schema([
-                                    Select::make('chapter')
-                                        ->options(
-                                            Chapter::query()
-                                            ->pluck('name', 'id')
-                                        )
-                                        ->live()
-                                        ->required(),
-                                    Select::make('criteria')
-                                        ->options(fn (Get $get): array => match ($get('chapter')) {
-                                            default => Criteria::query()->where('chapter_id', $get('chapter'))
-                                                ->pluck('name', 'id')->toArray(),
-                                        })
-                                        ->required(),
-                                    RichEditor::make('comment')
-                                        ->toolbarButtons([
-                                            'blockquote',
-                                            'bold',
-                                            'bulletList',
-                                            'codeBlock',
-                                            'h2',
-                                            'h3',
-                                            'italic',
-                                            'link',
-                                            'orderedList',
-                                            'strike',
-                                            'underline',
-                                        ])
-                                        ->required(),
-                                    FileUpload::make('attachments')
-                                        ->multiple()
-                                        ->image()
-                                        ->imageEditor(),
-                                    TextInput::make('score')
-                                        ->numeric()
-                                        ->step(0.1)
-                                        ->minValue(1)
-                                        ->maxValue(10)
-                                        ->required(),
-                                ])
-                                ->columns(2),
-                        ])->visible(fn(): bool => (bool) Auth::user()),
                     Wizard\Step::make('Owners')
                         ->schema([
                             Select::make('owners')
@@ -151,7 +94,7 @@ class CreateMine extends Component implements HasForms
                                         ->where('type', UserType::OWNER->value)
                                         ->pluck('username', 'id')
                                 )
-                        ]),
+                        ])->visible(fn(): bool => (bool) Auth::user()?->isAdmin()),
                     Wizard\Step::make('Certifiers')
                         ->schema([
                             Select::make('certifiers')
@@ -174,17 +117,6 @@ class CreateMine extends Component implements HasForms
         $mine = $this->mineService->store(
             $this->storeMineFactory->fromArray($form)
         );
-
-        if(array_key_exists('report', $form) && $form['report']) {
-            $this->reportService->store(
-                $this->storeReportFactory->fromFront(
-                    $form,
-                    $mine->getId(),
-                    ReportType::EVALUATION,
-                    Status::tryFrom($form['validation']) ?? Status::CREATED
-                )
-            );
-        }
 
         $users = [];
 
