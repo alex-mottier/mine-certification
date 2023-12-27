@@ -5,6 +5,7 @@ namespace App\Livewire\Institution;
 use App\Domain\Institution\Factory\UpdateInstitutionFactory;
 use App\Domain\Institution\InstitutionService;
 use App\Domain\Institution\InstitutionType;
+use App\Domain\SecurityService;
 use App\Domain\Status\Status;
 use App\Domain\User\UserType;
 use App\Models\Institution;
@@ -29,18 +30,24 @@ class EditInstitution extends Component implements HasForms
     public ?Institution $institution;
     protected InstitutionService $institutionService;
     protected UpdateInstitutionFactory $updateInstitutionFactory;
+    private SecurityService $securityService;
+
 
     public function boot(
         InstitutionService $institutionService,
         UpdateInstitutionFactory $updateInstitutionFactory,
+        SecurityService $securityService,
     ): void
     {
         $this->institutionService = $institutionService;
         $this->updateInstitutionFactory = $updateInstitutionFactory;
+        $this->securityService = $securityService;
     }
 
     public function mount(Institution $institution): void
     {
+        $this->securityService->checkAdmin();
+
         $this->institution = $institution;
 
         $this->form->fill(array_merge(

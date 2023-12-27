@@ -16,17 +16,20 @@
                         <x-nav-link href="{{ route('home') }}" wire:navigate :active="request()->routeIs('home')">
                             {{ __('Home') }}
                         </x-nav-link>
-                        @if(\Illuminate\Support\Facades\Auth::user()?->isAdmin())
-                            <x-nav-link href="{{ route('users') }}" wire:navigate :active="request()->routeIs('users')">
-                                {{ __('Users') }}
-                            </x-nav-link>
+                        @if(\Illuminate\Support\Facades\Auth::user()?->isAdmin() || \Illuminate\Support\Facades\Auth::user()?->isCertifier())
                             <x-nav-link href="{{ route('report.home') }}" wire:navigate :active="request()->routeIs('report.home')">
                                 {{ __('Reports') }}
                             </x-nav-link>
                         @endif
-                        <x-nav-link href="{{ route('institution.home') }}" wire:navigate :active="request()->routeIs('institution.home')">
-                            {{ __('Institutions') }}
-                        </x-nav-link>
+
+                    @if(\Illuminate\Support\Facades\Auth::user()?->isAdmin())
+                            <x-nav-link href="{{ route('users') }}" wire:navigate :active="request()->routeIs('users')">
+                                {{ __('Users') }}
+                            </x-nav-link>
+                            <x-nav-link href="{{ route('institution.home') }}" wire:navigate :active="request()->routeIs('institution.home')">
+                                {{ __('Institutions') }}
+                            </x-nav-link>
+                        @endif
                     </div>
                     <div class="flex justify-end w-full">
                         @auth
@@ -47,7 +50,7 @@
                                 <x-nav-link href="{{ route('login') }}" wire:navigate :active="request()->routeIs('login')">
                                     {{ __('Login') }}
                                 </x-nav-link>
-                                <x-nav-link href="{{ route('register') }}" wire:navigate :active="request()->routeIs('register')">
+                                <x-nav-link href="{{ route('user.create') }}" wire:navigate :active="request()->routeIs('register')">
                                     {{ __('Register') }}
                                 </x-nav-link>
                             </div>

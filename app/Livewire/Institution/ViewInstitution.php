@@ -4,6 +4,7 @@ namespace App\Livewire\Institution;
 
 use App\Domain\Institution\Factory\ValidateInstitutionFactory;
 use App\Domain\Institution\InstitutionService;
+use App\Domain\SecurityService;
 use App\Domain\Status\Status;
 use App\Models\Institution;
 use Filament\Forms\Components\Radio;
@@ -28,18 +29,22 @@ class ViewInstitution extends Component implements HasInfolists, HasForms
     public ?Institution $institution;
     protected InstitutionService $institutionService;
     protected ValidateInstitutionFactory $validateInstitutionFactory;
+    private SecurityService $securityService;
 
     public function boot(
         InstitutionService $institutionService,
         ValidateInstitutionFactory $validateInstitutionFactory,
+        SecurityService $securityService,
     ): void
     {
         $this->institutionService = $institutionService;
         $this->validateInstitutionFactory = $validateInstitutionFactory;
+        $this->securityService = $securityService;
     }
 
     public function mount(Institution $institution): void
     {
+        $this->securityService->checkAdmin();
         $this->institution = $institution;
     }
 

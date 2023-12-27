@@ -48,8 +48,6 @@ class UserFactory extends Factory
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
             'status' => $status,
-            'longitude' => $this->faker->longitude,
-            'latitude' => $this->faker->latitude,
             'type' => $this->faker->randomElement(UserType::cases()),
             'validated_by' => $validatedBy,
             'validated_at' => $validatedAt

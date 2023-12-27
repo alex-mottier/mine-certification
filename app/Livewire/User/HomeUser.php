@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Domain\SecurityService;
 use App\Domain\Status\Status;
 use App\Domain\User\Factory\ValidateUserFactory;
 use App\Domain\User\UserService;
@@ -32,14 +33,23 @@ class HomeUser extends Component implements HasForms, HasTable
     protected UserService $userService;
     protected ValidateUserFactory $validateUserFactory;
 
+    protected SecurityService $securityService;
+
     public function boot(
         UserService $userService,
-        ValidateUserFactory $validateUserFactory
+        ValidateUserFactory $validateUserFactory,
+        SecurityService $securityService,
     ): void
     {
         $this->query = User::query();
         $this->userService = $userService;
         $this->validateUserFactory = $validateUserFactory;
+        $this->securityService = $securityService;
+    }
+
+    public function mount(): void
+    {
+        $this->securityService->checkAdmin();
     }
 
     public function table(Table $table): Table

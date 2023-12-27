@@ -74,12 +74,6 @@ class ViewReport extends Component implements HasTable, HasForms, HasInfolists
                     ->url(fn(Models\Report $record): string =>
                         route('mine.view', ['mine' => $record->mine()->first()])
                     ),
-                TextEntry::make('createdBy.username')
-                    ->url(fn(Models\Report $record): string =>
-                        route('user.view', ['user' => $record->createdBy()->first()])
-                    )->visible(fn(Models\Report $record): bool =>
-                        (bool) $record->createdBy()->first()
-                    ),
                 TextEntry::make('status')
                     ->icon(fn (Status $state): string => match ($state) {
                         Status::CREATED => 'heroicon-o-plus-circle',

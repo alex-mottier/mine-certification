@@ -52,10 +52,6 @@ class CreateUser extends Component implements HasForms
                 TextInput::make('password')
                     ->required()
                     ->password(),
-                TextInput::make('longitude')
-                    ->required(),
-                TextInput::make('latitude')
-                    ->required(),
                 Select::make('type')
                     ->required()
                     ->options(UserType::class),

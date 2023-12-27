@@ -11,6 +11,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -37,6 +38,7 @@ class MineOwners extends Component implements HasForms, HasTable
                 Action::make('view')
                     ->icon('heroicon-o-viewfinder-circle')
                     ->url(fn(User $record) => route('user.view', ['user' => $record->user_id]))
+                    ->visible(fn(): bool => (bool) Auth::user()?->isAdmin())
             ])
             ->paginated(false);
     }

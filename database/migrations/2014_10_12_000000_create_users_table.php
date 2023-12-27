@@ -25,9 +25,6 @@ return new class extends Migration
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
 
-            $table->double('longitude')->nullable();
-            $table->double('latitude')->nullable();
-
             $table->foreignIdFor(User::class,'created_by')->nullable();
 
             $table->foreignIdFor(User::class,'validated_by')->nullable();

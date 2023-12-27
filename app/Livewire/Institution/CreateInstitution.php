@@ -5,6 +5,7 @@ namespace App\Livewire\Institution;
 use App\Domain\Institution\Factory\StoreInstitutionFactory;
 use App\Domain\Institution\InstitutionService;
 use App\Domain\Institution\InstitutionType;
+use App\Domain\SecurityService;
 use App\Domain\Status\Status;
 use App\Domain\User\UserType;
 use App\Models\User;
@@ -27,18 +28,22 @@ class CreateInstitution extends Component implements HasForms
     public ?array $data = [];
     private InstitutionService $institutionService;
     private StoreInstitutionFactory $storeInstitutionFactory;
+    private SecurityService $securityService;
 
     public function boot(
         InstitutionService $institutionService,
         StoreInstitutionFactory $storeInstitutionFactory,
+        SecurityService $securityService,
     ): void
     {
         $this->institutionService = $institutionService;
         $this->storeInstitutionFactory = $storeInstitutionFactory;
+        $this->securityService = $securityService;
     }
 
     public function mount(): void
     {
+        $this->securityService->checkAdmin();
         $this->form->fill();
     }
 

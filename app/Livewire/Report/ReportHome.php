@@ -5,6 +5,7 @@ namespace App\Livewire\Report;
 use App\Domain\Report\Factory\UpgradeReportFactory;
 use App\Domain\Report\ReportService;
 use App\Domain\Report\ReportType;
+use App\Domain\SecurityService;
 use App\Domain\Status\Status;
 use App\Models;
 use Filament\Forms\Components\Radio;
@@ -31,20 +32,38 @@ class ReportHome extends Component implements HasForms, HasTable
     private ReportService $reportService;
     private UpgradeReportFactory $upgradeReportFactory;
 
+    private SecurityService $securityService;
+
+    public function mount(): void
+    {
+        $this->securityService->checkReport();
+    }
+
     public function boot(
         ReportService $reportService,
         UpgradeReportFactory $upgradeReportFactory,
+        SecurityService $securityService
     ): void
     {
         $this->reportService = $reportService;
         $this->upgradeReportFactory = $upgradeReportFactory;
+        $this->securityService = $securityService;
     }
 
     private function getQuery(): Builder|Relation|null
     {
-        if(Auth::user()?->isAdmin()){
-            return Models\Report::query()->with('mine.certifiers');
+        $query = Models\Report::query()->with('mine.certifiers');
+
+        if(Auth::user()?->isCertifier()){
+            return $query->whereHas('mine.certifiers', function (Builder $query) {
+                $query->where(
+                    'users.id',
+                    Auth::user()->id,
+                );
+            });
         }
+
+        return $query;
     }
 
     public function table(Table $table): Table
@@ -92,7 +111,13 @@ class ReportHome extends Component implements HasForms, HasTable
             ->actions([
                 Action::make('view')
                     ->icon('heroicon-o-viewfinder-circle')
-                    ->url(fn (Models\Report $record): string => route('report.view', ['report' => $record])),
+                    ->url(fn (Models\Report $record): string => route('report.view', ['report' => $record]))
+                    ->visible(fn (Models\Report $record): bool => $record->type === ReportType::REPORT),
+                Action::make('evaluate')
+                    ->icon('heroicon-o-play-pause')
+                    ->color('warning')
+                    ->url(fn (Models\Report $record): string => route('mine.evaluate', ['mine' => $record->mine]))
+                    ->visible(fn (Models\Report $record): bool => $record->type === ReportType::EVALUATION && Auth::user()?->isCertifier()),
                 Action::make('validate')
                     ->icon('heroicon-o-flag')
                     ->color('warning')

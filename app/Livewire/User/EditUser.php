@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Domain\SecurityService;
 use App\Domain\User\Factory\UpdateUserFactory;
 use App\Domain\User\UserService;
 use App\Domain\User\UserType;
@@ -25,9 +26,11 @@ class EditUser extends Component implements HasForms
 
     protected UserService $userService;
     protected UpdateUserFactory $updateUserFactory;
+    private SecurityService $securityService;
 
     public function mount(User $user): void
     {
+        $this->securityService->checkAdmin();
         $this->user = $user;
         $this->form->fill($this->user->toArray());
 
@@ -36,10 +39,12 @@ class EditUser extends Component implements HasForms
     public function boot(
         UserService $userService,
         UpdateUserFactory $updateUserFactory,
+        SecurityService $securityService,
     ): void
     {
         $this->userService = $userService;
         $this->updateUserFactory = $updateUserFactory;
+        $this->securityService = $securityService;
     }
 
     public function form(Form $form): Form

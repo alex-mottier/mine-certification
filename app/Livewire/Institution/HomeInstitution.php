@@ -5,6 +5,7 @@ namespace App\Livewire\Institution;
 use App\Domain\Institution\Factory\ValidateInstitutionFactory;
 use App\Domain\Institution\InstitutionService;
 use App\Domain\Institution\InstitutionType;
+use App\Domain\SecurityService;
 use App\Domain\Status\Status;
 use App\Models;
 use App\Models\Institution;
@@ -31,14 +32,24 @@ class HomeInstitution extends Component implements HasForms, HasTable
 
     private InstitutionService $institutionService;
     private ValidateInstitutionFactory $validateInstitutionFactory;
+    private SecurityService $securityService;
+
 
     public function boot(
         InstitutionService $institutionService,
         ValidateInstitutionFactory $validateInstitutionFactory,
+        SecurityService $securityService,
+
     ): void
     {
         $this->institutionService = $institutionService;
         $this->validateInstitutionFactory = $validateInstitutionFactory;
+        $this->securityService = $securityService;
+    }
+
+    public function mount(): void
+    {
+        $this->securityService->checkAdmin();
     }
 
     private function getQuery(): Builder

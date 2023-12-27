@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Domain\SecurityService;
 use App\Domain\Status\Status;
 use App\Domain\User\Factory\ValidateUserFactory;
 use App\Domain\User\UserService;
@@ -30,17 +31,22 @@ class ViewUser extends Component implements HasInfolists, HasForms
     protected UserService $userService;
     protected ValidateUserFactory $validateUserFactory;
 
+    protected SecurityService $securityService;
+
     public function boot(
         UserService $userService,
         ValidateUserFactory $validateUserFactory,
+        SecurityService $securityService,
     ): void
     {
         $this->userService = $userService;
         $this->validateUserFactory = $validateUserFactory;
+        $this->securityService = $securityService;
     }
 
     public function mount(User $user): void
     {
+        $this->securityService->checkUser($user);
         $this->user = $user;
     }
 
@@ -63,53 +69,51 @@ class ViewUser extends Component implements HasInfolists, HasForms
                                 Status::FOR_VALIDATION => 'warning',
                                 Status::VALIDATED => 'success',
                                 Status::REFUSED => 'danger'
-                            }),
-                        TextEntry::make('longitude'),
-                        TextEntry::make('latitude')->suffixActions([
-                            Action::make('validate')
-                                ->tooltip('Validate this user')
-                                ->icon('heroicon-o-flag')
-                                ->color('third')
-                                ->form([
-                                    Radio::make('status')
-                                        ->options([
-                                            'validated' => 'Validated',
-                                            'refused' => 'Refused'
-                                        ])
-                                        ->inline()
-                                        ->required()
-                                ])
-                                ->action(function(array $data, User $record): void {
-                                    $this->userService->validateUser(
-                                        $this->validateUserFactory->fromStatus(
-                                            Status::tryFrom($data['status'])
-                                        ),
-                                        $record->id
-                                    );
-                                })
-                                ->visible(fn (User $record): bool => $record->status === Status::FOR_VALIDATION && Auth::user()?->isAdmin()),
-                            Action::make('edit')
-                                ->icon('heroicon-o-pencil-square')
-                                ->url(fn(User $record) => route('user.edit', ['user' => $record]))
-                                ->tooltip('Edit this user')
-                                ->color('warning')
-                                ->visible(
-                                    fn(User $record): bool =>
-                                        Auth::user()?->isAdmin() ||
-                                        (Auth::user()?->id === $record->created_by && $record->created_by)
-                                ),
-                            Action::make('delete')
-                                ->icon('heroicon-o-trash')
-                                ->action(function(User $record) {$record->delete(); $this->redirect(route('users'));} )
-                                ->requiresConfirmation()
-                                ->color('danger')
-                                ->tooltip('Delete this user')
-                                ->visible(
-                                    fn(User $record): bool =>
-                                        Auth::user()?->isAdmin() ||
-                                        (Auth::user()?->id === $record->created_by && $record->created_by)
-                                )
-                        ]),
+                            })->suffixActions([
+                                Action::make('validate')
+                                    ->tooltip('Validate this user')
+                                    ->icon('heroicon-o-flag')
+                                    ->color('third')
+                                    ->form([
+                                        Radio::make('status')
+                                            ->options([
+                                                'validated' => 'Validated',
+                                                'refused' => 'Refused'
+                                            ])
+                                            ->inline()
+                                            ->required()
+                                    ])
+                                    ->action(function(array $data, User $record): void {
+                                        $this->userService->validateUser(
+                                            $this->validateUserFactory->fromStatus(
+                                                Status::tryFrom($data['status'])
+                                            ),
+                                            $record->id
+                                        );
+                                    })
+                                    ->visible(fn (User $record): bool => $record->status === Status::FOR_VALIDATION && Auth::user()?->isAdmin()),
+                                Action::make('edit')
+                                    ->icon('heroicon-o-pencil-square')
+                                    ->url(fn(User $record) => route('user.edit', ['user' => $record]))
+                                    ->tooltip('Edit this user')
+                                    ->color('warning')
+                                    ->visible(
+                                        fn(User $record): bool =>
+                                            Auth::user()?->isAdmin() ||
+                                            (Auth::user()?->id === $record->created_by && $record->created_by)
+                                    ),
+                                Action::make('delete')
+                                    ->icon('heroicon-o-trash')
+                                    ->action(function(User $record) {$record->delete(); $this->redirect(route('users'));} )
+                                    ->requiresConfirmation()
+                                    ->color('danger')
+                                    ->tooltip('Delete this user')
+                                    ->visible(
+                                        fn(User $record): bool =>
+                                            Auth::user()?->isAdmin() ||
+                                            (Auth::user()?->id === $record->created_by && $record->created_by)
+                                    )
+                            ]),
                     ])->columns(4)
             ]);
     }

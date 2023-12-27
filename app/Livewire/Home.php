@@ -38,15 +38,7 @@ class Home extends Component implements HasForms, HasTable
         ValidateMineFactory $validateMineFactory,
     ): void
     {
-        if(Auth::user()?->isAdmin()){
-            $this->mines = Mine::query();
-        }
-        else if(Auth::user()){
-            $this->mines = Auth::user()->mines()->getQuery();
-        }
-        else{
-            $this->mines = Mine::query()->validated();
-        }
+        $this->mines = Mine::query();
 
         $this->mineService = $mineService;
         $this->validateMineFactory = $validateMineFactory;
@@ -61,8 +53,8 @@ class Home extends Component implements HasForms, HasTable
                     ->label('Image')
                     ->width(250)
                     ->height(250),
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('score')->numeric(),
+                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('score')->numeric()->sortable(),
                 TextColumn::make('status')
                     ->icon(fn (Status $state): string => match ($state) {
                         Status::CREATED => 'heroicon-o-plus-circle',
@@ -78,10 +70,11 @@ class Home extends Component implements HasForms, HasTable
                         Status::REFUSED => 'danger'
                     })
                     ->searchable()
-                    ->visible(fn(): bool => (bool) Auth::user()),
+                    ->sortable(),
                 TextColumn::make('type')
                     ->badge()
                     ->searchable()
+                    ->sortable()
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -103,12 +96,12 @@ class Home extends Component implements HasForms, HasTable
                         if(Auth::user()?->isAdmin() || Auth::user() == null){
                             return route('mine.view', ['mine' => $record]);
                         }
-                        return route('mine.view', ['mine' => $record->mine_id]);
+                        return route('mine.view', ['mine' => $record]);
                     })
                     ->visible(fn (Mine $record): bool =>
                         $record->isValidated() ||
                         Auth::user()?->isAdmin() ||
-                        Auth::user()?->hasMine($record->mine_id) ||
+                        Auth::user()?->hasMine($record->id) ||
                         Auth::user()?->id === $record->created_by
                     ),
                 Action::make('report')

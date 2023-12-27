@@ -6,6 +6,7 @@ use App\Domain\Mine\Factory\AssignCertifiersMineFactory;
 use App\Domain\Mine\Factory\AssignUsersMineFactory;
 use App\Domain\Mine\Factory\UpdateMineFactory;
 use App\Domain\Mine\MineService;
+use App\Domain\SecurityService;
 use App\Domain\User\UserType;
 use App\Models\Mine;
 use App\Models\User;
@@ -35,22 +36,26 @@ class EditMine extends Component implements HasForms
 
     protected AssignCertifiersMineFactory $assignCertifiersMineFactory;
     protected AssignUsersMineFactory $assignUsersMineFactory;
+    protected SecurityService $securityService;
 
     public function boot(
         MineService                 $mineService,
         UpdateMineFactory           $updateMineFactory,
         AssignCertifiersMineFactory $assignCertifiersMineFactory,
         AssignUsersMineFactory      $assignInstitutionsMineFactory,
+        SecurityService $securityService,
     ): void
     {
         $this->mineService = $mineService;
         $this->updateMineFactory = $updateMineFactory;
         $this->assignCertifiersMineFactory = $assignCertifiersMineFactory;
         $this->assignUsersMineFactory = $assignInstitutionsMineFactory;
+        $this->securityService = $securityService;
     }
 
-    public function mount(Mine $mine): void
+    public function mount(Mine $mine): void  
     {
+        $this->securityService->checkMine($mine);
         $certifiers = ['certifiers' => $mine->certifiers()->pluck('users.id')->toArray()];
         $owners = ['owners' => $mine->owners()->pluck('users.id')->toArray()];
         $this->form->fill(array_merge($mine->toArray(), $certifiers, $owners));

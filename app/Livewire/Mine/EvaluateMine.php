@@ -6,6 +6,7 @@ use App\Domain\Report\Factory\StoreReportFactory;
 use App\Domain\Report\Factory\UpdateReportFactory;
 use App\Domain\Report\ReportService;
 use App\Domain\Report\ReportType;
+use App\Domain\SecurityService;
 use App\Domain\Status\Status;
 use App\Models\Chapter;
 use App\Models\Criteria;
@@ -38,20 +39,24 @@ class EvaluateMine extends Component implements HasForms
     private ReportService $reportService;
     private StoreReportFactory $storeReportFactory;
     private UpdateReportFactory $updateReportFactory;
+    private SecurityService $securityService;
 
     public function boot(
         ReportService                 $reportService,
         StoreReportFactory $storeReportFactory,
         UpdateReportFactory $updateReportFactory,
+        SecurityService $securityService,
     ): void
     {
         $this->reportService = $reportService;
         $this->storeReportFactory = $storeReportFactory;
         $this->updateReportFactory = $updateReportFactory;
+        $this->securityService = $securityService;
     }
 
     public function mount(Mine $mine): void
     {
+        $this->securityService->checkEvaluation($mine);
         $this->mine = $mine;
         /**
          * @var Report $evaluation
